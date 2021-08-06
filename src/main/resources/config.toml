@@ -1,0 +1,36 @@
+#
+# VexelCore Proxy Config File
+#
+# Please visit the wiki for detailed information :)
+#
+
+prefix = "&aVCP &8>> "
+
+customCommand = [
+    { type = "playerProxyExecute", newCommand = "hub", execute = "server hub", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "survival", execute = "server survival", passArgs = "no" },
+    { type = "playerServerExecute", newCommand = "helpplz", execute = "help", passArgs = "yes" },
+]
+
+[permissions]
+staff = "vcp.staff" # To execute /vcp help and /vcp reload
+glist = "vcp.glist" # To view custom /glist
+
+[features]
+customCommand = true
+customGlist = true
+
+[special]
+formatting = "&r&8&m                 "
+serverName = "&aYour Server Name"
+
+
+[language]
+helpL1 = "&3/vcp &7help &8- &7Displays these help chat messages"
+helpL2 = "&3/vcp &7version &8- &7Displays version information"
+helpL3 = "&3/vcp &7reload &8- &7Reloads plugin config."
+helpL4 = "&3Important Note: &7This plugin is modular. Please check the config.toml file to see which features you want to enable and or customize."
+reloadedConfig = "&7The configuration has been reloaded."
+noPermission = "&c(!) &7You do not have the required authorization for this command!"
+invalidUsage = "&7Usage: "
+canOnlyBeExecutedByAPlayer = "&c(!) &7This can only be executed by a player!"
