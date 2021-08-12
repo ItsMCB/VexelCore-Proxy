@@ -24,9 +24,9 @@ public class VCP implements SimpleCommand {
         this.server = server;
     }
 
-    public static Toml language = VexelCoreProxy.getConfig().getTable("language");
-    public static Toml special = VexelCoreProxy.getConfig().getTable("special");
-    public static Toml features = VexelCoreProxy.getConfig().getTable("features");
+    public Toml language = VexelCoreProxy.getConfig().getTable("language");
+    public Toml special = VexelCoreProxy.getConfig().getTable("special");
+    public Toml features = VexelCoreProxy.getConfig().getTable("features");
     public static PluginDescription vcp = VexelCoreProxy.getProxyServer().getPluginManager().getPlugin("vexelcore").get().getDescription();
     public static String pluginName = vcp.getName().get();
     public static String pluginVersion = vcp.getVersion().get();
@@ -73,7 +73,7 @@ public class VCP implements SimpleCommand {
         source.sendMessage(ChatUtils.parseLegacy("&7Use &3/vcp help &7to view available commands."));
     }
 
-    public static void showHelp(CommandSource source) {
+    public void showHelp(CommandSource source) {
         source.sendMessage(ChatUtils.parseLegacy(special.getString("formatting") + "&a" + pluginName + " v" + pluginVersion + special.getString("formatting") ));
         source.sendMessage(MessageUtils.get("helpL1"));
         source.sendMessage(MessageUtils.get("helpL2"));

@@ -16,7 +16,7 @@ public class CustomCommand implements SimpleCommand {
     private final ProxyServer server;
     private HashMap<String, String> map;
 
-    public static Toml language = VexelCoreProxy.getConfig().getTable("language");
+    public Toml language = VexelCoreProxy.getConfig().getTable("language");
 
     public CustomCommand(ProxyServer server, HashMap<String, String>  map) {
         this.server = server;

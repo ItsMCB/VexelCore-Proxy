@@ -9,6 +9,12 @@ prefix = "&aVCP &8>> "
 customCommand = [
     { type = "playerProxyExecute", newCommand = "hub", execute = "server hub", passArgs = "no" },
     { type = "playerProxyExecute", newCommand = "survival", execute = "server survival", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "nds", execute = "server natural-disasters", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "nds2", execute = "server natural-disasters2", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "creative", execute = "server creative", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "tnt", execute = "server tntrunv2", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "td", execute = "server towerdefense", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "snapshot", execute = "server snapshot", passArgs = "no" },
     { type = "playerServerExecute", newCommand = "helpplz", execute = "help", passArgs = "yes" },
 ]
 

@@ -6,13 +6,16 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 import me.itsmcb.vexelcoreproxy.utils.MessageUtils;
 import me.itsmcb.vexelcoreproxy.utils.PermissionUtils;
+import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Glist implements SimpleCommand {
 
@@ -21,7 +24,7 @@ public class Glist implements SimpleCommand {
         this.server = server;
     }
 
-    public static Toml special = VexelCoreProxy.getConfig().getTable("special");
+    public Toml special = VexelCoreProxy.getConfig().getTable("special");
 
     @Override
     public void execute(Invocation invocation) {
@@ -41,10 +44,12 @@ public class Glist implements SimpleCommand {
 
     }
 
-    private void sendServerPlayers(CommandSource target, RegisteredServer server) {
-        List<Player> onServer = ImmutableList.copyOf(server.getPlayersConnected());
+    private void sendServerPlayers(CommandSource target, RegisteredServer regserver) {
+        List<Player> onServer = ImmutableList.copyOf(regserver.getPlayersConnected());
         StringBuilder msg = new StringBuilder();
-        msg.append("&3").append(server.getServerInfo().getName()).append(" &7(").append(onServer.size()).append(") &8>> &a");
+        Optional<RegisteredServer> regServerFix = server.getServer(regserver.getServerInfo().getName());
+        TextComponent hoverMsg = ChatUtils.parseLegacy("&3Online: &a" + regServerFix.isPresent()); // do later
+        msg.append("&3").append(regserver.getServerInfo().getName()).append(" &7(").append(onServer.size()).append(") &8>> &a");
 
         for (int i = 0; i < onServer.size(); i++) {
             Player player = onServer.get(i);

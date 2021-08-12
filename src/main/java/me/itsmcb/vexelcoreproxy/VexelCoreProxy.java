@@ -36,7 +36,9 @@ public class VexelCoreProxy {
 
     public static VexelCoreProxy getInstance() { return instance; }
     public static Path getDataDirectory() { return dataDirectory; }
-    public static Toml getConfig() { return toml; }
+    public static Toml getConfig() {
+        return toml;
+    }
     public static ProxyServer getProxyServer() { return server; }
     public static Logger getLogger() { return logger; }
 
@@ -61,6 +63,7 @@ public class VexelCoreProxy {
         }
     }
     // Next up: Ability to send custom JSON messages using CC's.
+    // By default, only show the /glist servers if there are players in them. The whole list can be viewed with a flag. Also, show hover info for servers and players
 
 
 
