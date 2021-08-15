@@ -31,7 +31,7 @@ public class Glist implements SimpleCommand {
     @Override
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
-        //String[] args = invocation.arguments(); # Maybe do something with this later, such as /glist <server name> for more detailed info
+        String[] args = invocation.arguments();
         if (source instanceof Player) {
             Player p = (Player) source;
             if (!p.hasPermission(config.getTable("permissions").getString("glist"))) {
@@ -40,17 +40,26 @@ public class Glist implements SimpleCommand {
             }
         }
         source.sendMessage(ChatUtils.parseLegacy(special.getString("formatting") + special.getString("serverName") + special.getString("formatting")));
-        for (RegisteredServer server : server.getAllServers()) {
-            sendServerPlayers(source, server);
+        Boolean showAllServers = false;
+        if (args.length > 0) {
+            if (args[0].equalsIgnoreCase("-all")) {
+                showAllServers = true;
+            }
         }
-
+        for (RegisteredServer regserver : server.getAllServers()) {
+            if (regserver.getPlayersConnected().size() == 0 && showAllServers) {
+                sendServerPlayers(source, regserver);
+            }
+            if (regserver.getPlayersConnected().size() > 0) {
+                sendServerPlayers(source, regserver);
+            }
+        }
     }
 
     private void sendServerPlayers(CommandSource target, RegisteredServer regserver) {
         List<Player> onServer = ImmutableList.copyOf(regserver.getPlayersConnected());
         StringBuilder msg = new StringBuilder();
-        Optional<RegisteredServer> regServerFix = server.getServer(regserver.getServerInfo().getName());
-        TextComponent hoverMsg = ChatUtils.parseLegacy("&3Online: &a" + regServerFix.isPresent()); // do later
+        //TextComponent hoverMsg = ChatUtils.parseLegacy("&3Online: &a" + regServerFix.isPresent()); // do later
         msg.append("&3").append(regserver.getServerInfo().getName()).append(" &7(").append(onServer.size()).append(") &8>> &a");
 
         for (int i = 0; i < onServer.size(); i++) {
