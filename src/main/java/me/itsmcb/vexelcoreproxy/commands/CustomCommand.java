@@ -15,11 +15,13 @@ public class CustomCommand implements SimpleCommand {
 
     private final ProxyServer server;
     private HashMap<String, String> map;
+    private Toml config;
+    private Toml language;
 
-    public Toml language = VexelCoreProxy.getConfig().getTable("language");
-
-    public CustomCommand(ProxyServer server, HashMap<String, String>  map) {
-        this.server = server;
+    public CustomCommand(VexelCoreProxy VCP, HashMap<String, String>  map) {
+        this.config = VCP.getConfig();
+        this.language = config.getTable("language");
+        this.server = VCP.getProxyServer();
         this.map = map;
     }
 

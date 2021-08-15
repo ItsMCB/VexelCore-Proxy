@@ -2,7 +2,6 @@ package me.itsmcb.vexelcoreproxy.utils;
 
 import com.moandjiezana.toml.Toml;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.InputStream;
@@ -12,17 +11,17 @@ import java.nio.file.Path;
 
 public class FileUtils {
 
-    public static Toml getTomlConfig(Path path, String fileName, Logger logger) {
+    public static Toml getTomlConfig(Path path, String fileName, VexelCoreProxy VCP) {
         File folder = path.toFile();
         File file = new File(folder, fileName);
         if (!file.getParentFile().exists()) {
-            logger.info("Generating directory \"" + file.getParentFile().getName() + "\"...");
+            VCP.getLogger().info("Generating directory \"" + file.getParentFile().getName() + "\"...");
             file.getParentFile().mkdirs();
         }
         if (!file.exists()) {
-            logger.info("Generating file \"" + fileName + "\"...");
+            VCP.getLogger().info("Generating file \"" + fileName + "\"...");
             try {
-                InputStream input = VexelCoreProxy.getInstance().getClass().getResourceAsStream("/" + file.getName());
+                InputStream input = VCP.getClass().getResourceAsStream("/" + file.getName());
                 try {
                     if (input != null) {
                         Files.copy(input, file.toPath(), new CopyOption[0]);

@@ -6,12 +6,10 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 import me.itsmcb.vexelcoreproxy.utils.MessageUtils;
-import me.itsmcb.vexelcoreproxy.utils.PermissionUtils;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.List;
@@ -20,11 +18,15 @@ import java.util.Optional;
 public class Glist implements SimpleCommand {
 
     private final ProxyServer server;
-    public Glist(ProxyServer server) {
-        this.server = server;
+    private Toml config;
+    private Toml special;
+    private Toml language;
+    public Glist(VexelCoreProxy VCP) {
+        this.server = VCP.getProxyServer();
+        this.config = VCP.getConfig();
+        this.special = config.getTable("special");
+        this.language = config.getTable("language");
     }
-
-    public Toml special = VexelCoreProxy.getConfig().getTable("special");
 
     @Override
     public void execute(Invocation invocation) {
@@ -32,8 +34,8 @@ public class Glist implements SimpleCommand {
         //String[] args = invocation.arguments(); # Maybe do something with this later, such as /glist <server name> for more detailed info
         if (source instanceof Player) {
             Player p = (Player) source;
-            if (!p.hasPermission(PermissionUtils.get("glist"))) {
-                p.sendMessage(MessageUtils.get("noPermission"));
+            if (!p.hasPermission(config.getTable("permissions").getString("glist"))) {
+                p.sendMessage(MessageUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
                 return;
             }
         }
