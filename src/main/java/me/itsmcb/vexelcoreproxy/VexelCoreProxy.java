@@ -2,22 +2,22 @@ package me.itsmcb.vexelcoreproxy;
 
 import com.google.inject.Inject;
 import com.moandjiezana.toml.Toml;
-import com.velocitypowered.api.command.CommandMeta;
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import me.itsmcb.vexelcoreproxy.commands.CustomCommand;
 import me.itsmcb.vexelcoreproxy.commands.Glist;
 import me.itsmcb.vexelcoreproxy.commands.MainCMD;
-import me.itsmcb.vexelcoreproxy.commands.CustomCommand;
 import me.itsmcb.vexelcoreproxy.utils.FileUtils;
 import me.itsmcb.vexelcoreproxy.utils.TimeUtils;
 import me.itsmcb.vexelcoreproxy.utils.VelocityUtils;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 @Plugin(
         id = "vexelcore",
@@ -59,17 +59,6 @@ public class VexelCoreProxy {
             e.printStackTrace();
             logger.error("An error occurred while loading. Shutting down...");
         }
-        /*
-        try {
-            CommandMeta meta_VCP = server.getCommandManager().metaBuilder("vcp").aliases("vexelcoreproxy").build();
-            server.getCommandManager().register(meta_VCP,new VCP(server));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("An error occurred while loading. Shutting down...");
-        }
-
-         */
     }
     // Next up: Ability to send custom JSON messages using CC's.
     // By default, only show the /glist servers if there are players in them. The whole list can be viewed with a flag. Also, show hover info for servers and players
@@ -100,11 +89,6 @@ public class VexelCoreProxy {
                 e.printStackTrace();
                 logger.error("Failed to register custom command \"" + hashMap.get("newCommand") + "\"");
             }
-            /*
-            CommandMeta meta_cc = server.getCommandManager().metaBuilder(hashMap.get("newCommand")).build();
-            server.getCommandManager().register(meta_cc, new CustomCommand(server, hashMap));
-
-             */
         });
         long endTime = System.nanoTime();
         logger.info("Loaded " + data.size() + " custom command(s) into memory in " + TimeUtils.convertDurationToMs(startTime,endTime));
@@ -114,7 +98,6 @@ public class VexelCoreProxy {
         List<HashMap<String, String>> data = VCP.toml.getList("customCommand");
         data.forEach((hashMap) -> {
             server.getCommandManager().unregister(hashMap.get("newCommand"));
-            logger.debug("UNREGISTERED COMMAND: " + hashMap.get("newCommand"));
         });
     }
 
@@ -123,19 +106,7 @@ public class VexelCoreProxy {
             setCustomCommands(VCP);
         }
         if (VCP.toml.getTable("features").getBoolean("customGlist")) {
-            VelocityUtils.registerCommand(new String[] {"glist","temptest"},new Glist(instance),instance);
-            // Remove "temptest" after making sure having just 1 alias works
-
-            /*
-
-            try {
-                CommandMeta meta_glist = server.getCommandManager().metaBuilder("glist").build();
-                server.getCommandManager().register(meta_glist,new Glist(server));
-            } catch (Exception e) {
-                e.printStackTrace();
-                getLogger().error("Unable to enable custom glist due to an error!");
-            }
-             */
+            VelocityUtils.registerCommand(new String[] {"glist"},new Glist(instance),instance);
         }
     }
 
