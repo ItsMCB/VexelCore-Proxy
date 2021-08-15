@@ -54,10 +54,9 @@ public class VexelCoreProxy {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         try {
             loadConfigs(instance,false);
-            VelocityUtils.registerCommand(new String[] {"vcp","vexelcoreproxy"},new MainCMD(instance),instance);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("An error occurred while loading. Shutting down...");
+            logger.warn("An error occurred while initializing VexelCore for Velocity. For the purpose of debugging, a shutdown has not been triggered.");
         }
     }
     // Next up: Ability to send custom JSON messages using CC's.
@@ -102,6 +101,9 @@ public class VexelCoreProxy {
     }
 
     public static void loadFeatures(VexelCoreProxy VCP) {
+        if (VCP.toml.getTable("features").getBoolean("vcp-main")) {
+            VelocityUtils.registerCommand(new String[] {"vcp","vexelcoreproxy"},new MainCMD(instance),instance);
+        }
         if (VCP.toml.getTable("features").getBoolean("customCommand")) {
             setCustomCommands(VCP);
         }
@@ -111,7 +113,12 @@ public class VexelCoreProxy {
     }
 
     public static void unloadFeatures(VexelCoreProxy VCP) {
-        unsetCustomCommands(VCP);
+        if (VCP.toml.getTable("features").getBoolean("vcp-main")) {
+            server.getCommandManager().unregister("vcp");
+        }
+        if (VCP.toml.getTable("features").getBoolean("customCommand")) {
+            unsetCustomCommands(VCP);
+        }
         if (VCP.toml.getTable("features").getBoolean("customGlist")) {
             server.getCommandManager().unregister("glist");
         }

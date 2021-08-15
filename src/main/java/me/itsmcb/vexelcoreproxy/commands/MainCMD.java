@@ -19,14 +19,13 @@ import java.util.List;
 public class MainCMD implements SimpleCommand {
 
     private final ProxyServer server;
-    private Toml config;
-    private PluginDescription pluginDescription;
-    private VexelCoreProxy VCP;
-    private Toml language;
-    private Toml features;
-    private Toml special;
-    private String pluginName;
-    private String pluginVersion;
+    private final Toml config;
+    private final VexelCoreProxy VCP;
+    private final Toml language;
+    private final Toml features;
+    private final Toml special;
+    private final String pluginName;
+    private final String pluginVersion;
     public MainCMD(VexelCoreProxy VCP) {
         this.VCP = VCP;
         this.server = VCP.getProxyServer();
@@ -34,7 +33,7 @@ public class MainCMD implements SimpleCommand {
         this.language = config.getTable("language");
         this.features = config.getTable("features");
         this.special = config.getTable("special");
-        this.pluginDescription = VCP.getProxyServer().getPluginManager().getPlugin("vexelcore").get().getDescription();
+        PluginDescription pluginDescription = VCP.getProxyServer().getPluginManager().getPlugin("vexelcore").get().getDescription();
         this.pluginName = pluginDescription.getName().get();
         this.pluginVersion = pluginDescription.getVersion().get();
     }
@@ -62,7 +61,6 @@ public class MainCMD implements SimpleCommand {
             }
         }
         showHelp(source);
-        return;
     }
 
     public void showVersion(CommandSource source) {

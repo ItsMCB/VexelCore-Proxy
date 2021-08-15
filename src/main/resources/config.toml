@@ -23,6 +23,7 @@ staff = "vcp.staff" # To execute /vcp help and /vcp reload
 glist = "vcp.glist" # To view custom /glist
 
 [features]
+vcp-main = true
 customCommand = true
 customGlist = true
 

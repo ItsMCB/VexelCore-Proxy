@@ -14,12 +14,11 @@ import java.util.HashMap;
 public class CustomCommand implements SimpleCommand {
 
     private final ProxyServer server;
-    private HashMap<String, String> map;
-    private Toml config;
-    private Toml language;
+    private final HashMap<String, String> map;
+    private final Toml language;
 
     public CustomCommand(VexelCoreProxy VCP, HashMap<String, String>  map) {
-        this.config = VCP.getConfig();
+        Toml config = VCP.getConfig();
         this.language = config.getTable("language");
         this.server = VCP.getProxyServer();
         this.map = map;

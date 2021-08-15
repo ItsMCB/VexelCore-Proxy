@@ -10,17 +10,20 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 import me.itsmcb.vexelcoreproxy.utils.MessageUtils;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Glist implements SimpleCommand {
 
     private final ProxyServer server;
-    private Toml config;
-    private Toml special;
-    private Toml language;
+    private final Toml config;
+    private final Toml special;
+    private final Toml language;
     public Glist(VexelCoreProxy VCP) {
         this.server = VCP.getProxyServer();
         this.config = VCP.getConfig();
@@ -40,7 +43,7 @@ public class Glist implements SimpleCommand {
             }
         }
         source.sendMessage(ChatUtils.parseLegacy(special.getString("formatting") + special.getString("serverName") + special.getString("formatting")));
-        Boolean showAllServers = false;
+        boolean showAllServers = false;
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("-all")) {
                 showAllServers = true;
@@ -54,22 +57,44 @@ public class Glist implements SimpleCommand {
                 sendServerPlayers(source, regserver);
             }
         }
+        
+        if (!showAllServers) {
+            source.sendMessage(ChatUtils.parseLegacy("&7To view all servers despite player count, do &3/glist -all"));
+        }
     }
 
     private void sendServerPlayers(CommandSource target, RegisteredServer regserver) {
+        String serverName = regserver.getServerInfo().getName();
         List<Player> onServer = ImmutableList.copyOf(regserver.getPlayersConnected());
-        StringBuilder msg = new StringBuilder();
-        //TextComponent hoverMsg = ChatUtils.parseLegacy("&3Online: &a" + regServerFix.isPresent()); // do later
-        msg.append("&3").append(regserver.getServerInfo().getName()).append(" &7(").append(onServer.size()).append(") &8>> &a");
+        StringBuilder playerList = new StringBuilder();
 
         for (int i = 0; i < onServer.size(); i++) {
             Player player = onServer.get(i);
-            msg.append(player.getUsername());
+            playerList.append(player.getUsername());
 
             if (i + 1 < onServer.size()) {
-                msg.append(", ");
+                playerList.append(", ");
             }
         }
-        target.sendMessage(ChatUtils.parseLegacy(msg.toString()));
+
+        AtomicReference<String> serverInfo = new AtomicReference<>("&cServer Unavailable");
+        AtomicReference<String> serverStatusColor = new AtomicReference<>("&c");
+        AtomicReference<String> MOTD = new AtomicReference<>("");
+        regserver.ping().exceptionally(e -> null).thenAcceptAsync(serverPing -> {
+            if (serverPing != null) {
+                String versionName = serverPing.getVersion().getName();
+                int protocol = serverPing.getVersion().getProtocol();
+                MOTD.set(LegacyComponentSerializer.legacyAmpersand().serialize(serverPing.getDescriptionComponent().asComponent()));
+
+                serverInfo.set("&7Version: &3" + versionName + " &8(&7" + protocol + "&8)\n&7MOTD: &3" + MOTD);
+                serverStatusColor.set("&a");
+            }
+        }).join();
+        Component server = ChatUtils.parseLegacy(serverStatusColor.get() + serverName + " &7(" + onServer.size() + ")")
+                .hoverEvent(HoverEvent.showText(ChatUtils.parseLegacy(serverInfo.get())))
+                .clickEvent(ClickEvent.suggestCommand("/server " + serverName));
+        Component stylingArrow = ChatUtils.parseLegacy(" &8>> ");
+        Component players = ChatUtils.parseLegacy("&7" + playerList);
+        target.sendMessage(Component.empty().append(server).append(stylingArrow).append(players));
     }
 }
