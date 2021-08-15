@@ -31,7 +31,6 @@ customGlist = true
 formatting = "&r&8&m                 "
 serverName = "&aYour Server Name"
 
-
 [language]
 helpL1 = "&3/vcp &7help &8- &7Displays these help chat messages"
 helpL2 = "&3/vcp &7version &8- &7Displays version information"

@@ -9,19 +9,18 @@ import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class CustomCommand implements SimpleCommand {
 
     private final ProxyServer server;
-    private final HashMap<String, String> map;
     private final Toml language;
+    private final Toml data;
 
-    public CustomCommand(VexelCoreProxy VCP, HashMap<String, String>  map) {
+    public CustomCommand(VexelCoreProxy VCP, Toml data) {
         Toml config = VCP.getConfig();
         this.language = config.getTable("language");
         this.server = VCP.getProxyServer();
-        this.map = map;
+        this.data = data;
     }
 
     @Override
@@ -30,10 +29,10 @@ public class CustomCommand implements SimpleCommand {
         String[] args = invocation.arguments();
         StringBuilder passedArgs = new StringBuilder();
         Arrays.stream(args).forEach(passedArgs::append);
-        String type = map.get("type");
+        String type = data.getString("type");
         if (type.equalsIgnoreCase("playerProxyExecute") || type.equalsIgnoreCase("playerServerExecute")) {
-            String execute = map.get("execute");
-            if (map.get("passArgs").equalsIgnoreCase("yes")) {
+            String execute = data.getString("execute");
+            if (data.getString("passArgs").equalsIgnoreCase("yes")) {
                 execute = execute + " " + passedArgs;
             }
             if (type.equalsIgnoreCase("playerProxyExecute")) {

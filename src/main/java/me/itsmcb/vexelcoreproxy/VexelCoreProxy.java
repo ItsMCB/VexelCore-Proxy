@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Plugin(
         id = "vexelcore",
@@ -80,17 +81,17 @@ public class VexelCoreProxy {
 
     public static void setCustomCommands(VexelCoreProxy VCP) {
         long startTime = System.nanoTime();
-        List<HashMap<String, String>> data = VCP.toml.getList("customCommand");
-        data.forEach((hashMap) -> {
+        AtomicInteger amountOfRegisteredCC = new AtomicInteger();
+        instance.toml.getTables("customCommand").forEach(data -> {
             try {
-                VelocityUtils.registerCommand(new String[] {hashMap.get("newCommand")},new CustomCommand(instance,hashMap),instance);
+                VelocityUtils.registerCommand(new String[] {data.getString("newCommand")},new CustomCommand(instance,data),instance);
+                amountOfRegisteredCC.getAndIncrement();
             } catch (Exception e) {
-                e.printStackTrace();
-                logger.error("Failed to register custom command \"" + hashMap.get("newCommand") + "\"");
+                logger.warn("Failed to register custom command \"" + data.getString("newCommand") + "\"");
             }
         });
         long endTime = System.nanoTime();
-        logger.info("Loaded " + data.size() + " custom command(s) into memory in " + TimeUtils.convertDurationToMs(startTime,endTime));
+        logger.info("Loaded " + amountOfRegisteredCC + " custom command(s) into memory in " + TimeUtils.convertDurationToMs(startTime,endTime));
     }
 
     public static void unsetCustomCommands(VexelCoreProxy VCP) {
