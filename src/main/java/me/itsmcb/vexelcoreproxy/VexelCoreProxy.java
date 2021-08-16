@@ -60,10 +60,9 @@ public class VexelCoreProxy {
             logger.warn("An error occurred while initializing VexelCore for Velocity. For the purpose of debugging, a shutdown has not been triggered.");
         }
     }
-    // Next up: Ability to send custom JSON messages using CC's.
-    // By default, only show the /glist servers if there are players in them. The whole list can be viewed with a flag. Also, show hover info for servers and players
-
-
+    // Display enabled features and custom command output as hoverable text added onto the /vcp output
+    // Option for CC's to only run on particular servers ex. onlyWorkOn arg
+    // Tab completion for commands
 
 
 

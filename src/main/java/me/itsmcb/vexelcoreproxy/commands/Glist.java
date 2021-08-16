@@ -9,7 +9,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
-import me.itsmcb.vexelcoreproxy.utils.MessageUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -38,7 +37,7 @@ public class Glist implements SimpleCommand {
         if (source instanceof Player) {
             Player p = (Player) source;
             if (!p.hasPermission(config.getTable("permissions").getString("glist"))) {
-                p.sendMessage(MessageUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
+                p.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
                 return;
             }
         }

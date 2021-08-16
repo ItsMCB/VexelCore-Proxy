@@ -7,7 +7,9 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
+import net.kyori.adventure.text.TextComponent;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CustomCommand implements SimpleCommand {
@@ -30,6 +32,12 @@ public class CustomCommand implements SimpleCommand {
         StringBuilder passedArgs = new StringBuilder();
         Arrays.stream(args).forEach(passedArgs::append);
         String type = data.getString("type");
+
+
+        //
+        // Executor
+        //
+
         if (type.equalsIgnoreCase("playerProxyExecute") || type.equalsIgnoreCase("playerServerExecute")) {
             String execute = data.getString("execute");
             if (data.getString("passArgs").equalsIgnoreCase("yes")) {
@@ -46,6 +54,28 @@ public class CustomCommand implements SimpleCommand {
                 return;
             }
             source.sendMessage(ChatUtils.parseLegacy(language.getString("canOnlyBeExecutedByAPlayer"))); // Improve later
+        }
+
+        //
+        // Message
+        //
+
+        if (type.equalsIgnoreCase("message")) {
+            ArrayList<TextComponent> tcList = new ArrayList<>();
+            data.getTables("components").forEach(msgData -> {
+                String action = msgData.getString("action");
+                if (action != null) {
+                    if (action.equalsIgnoreCase("open_url") || action.equalsIgnoreCase("run_command") || action.equalsIgnoreCase("suggest_command") || action.equalsIgnoreCase("copy_to_clipboard"))
+                        tcList.add(ChatUtils.clickableComponent(
+                                msgData.getString("content"),
+                                msgData.getString("hover"),
+                                action,
+                                msgData.getString("actionValue")));
+                } else {
+                    tcList.add(ChatUtils.parseLegacy(msgData.getString("content")));
+                }
+            });
+            tcList.forEach(source::sendMessage);
         }
     }
 }

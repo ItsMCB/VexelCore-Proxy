@@ -8,7 +8,6 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
-import me.itsmcb.vexelcoreproxy.utils.MessageUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -45,14 +44,14 @@ public class MainCMD implements SimpleCommand {
         if (source instanceof Player) {
             Player p = (Player) source;
             if (!p.hasPermission(config.getTable("permissions").getString("staff"))) {
-                p.sendMessage(MessageUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
+                p.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
                 return;
             }
         }
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")) {
                 VexelCoreProxy.loadConfigs(VCP, true);
-                source.sendMessage(MessageUtils.toComponent(new String[] {config.getString("prefix"),language.getString("reloadedConfig")}));
+                source.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("reloadedConfig")}));
                 return;
             }
             if (args[0].equalsIgnoreCase("version")) {
@@ -74,9 +73,9 @@ public class MainCMD implements SimpleCommand {
 
     public void showHelp(CommandSource source) {
         source.sendMessage(ChatUtils.parseLegacy(special.getString("formatting") + "&a" + pluginName + " v" + pluginVersion + special.getString("formatting") ));
-        source.sendMessage(MessageUtils.toComponent(language.getString("helpL1")));
-        source.sendMessage(MessageUtils.toComponent(language.getString("helpL2")));
-        source.sendMessage(MessageUtils.toComponent(language.getString("helpL3")));
+        source.sendMessage(ChatUtils.toComponent(language.getString("helpL1")));
+        source.sendMessage(ChatUtils.toComponent(language.getString("helpL2")));
+        source.sendMessage(ChatUtils.toComponent(language.getString("helpL3")));
         source.sendMessage(ChatUtils.parseLegacy("\n&3VCP Features Status:"));
         if (features.getBoolean("customGlist")) {
             source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Custom Glist"));
