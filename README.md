@@ -20,3 +20,8 @@ This plugin features a system that allows you to create aliases for commands or 
 Provides detailed information about the servers connected to your proxy.
 
 ![Minecraft Screenshot](https://i.imgur.com/5wnBRzJ.png)
+
+### bStats
+Plugin statistics
+
+![bStats](https://bstats.org/signatures/velocity/VexelCoreProxy.svg)

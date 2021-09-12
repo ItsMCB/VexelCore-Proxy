@@ -9,12 +9,15 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
+import me.itsmcb.vexelcoreproxy.utils.TabUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Glist implements SimpleCommand {
@@ -59,6 +62,12 @@ public class Glist implements SimpleCommand {
         if (!showAllServers) {
             source.sendMessage(ChatUtils.parseLegacy("&7To view all servers despite player count, do &3/glist -all"));
         }
+    }
+
+    @Override
+    public List<String> suggest(Invocation invocation) {
+        String[] args = invocation.arguments();
+        return TabUtils.returnTab(args, List.of("-all"));
     }
 
     private void sendServerPlayers(CommandSource target, RegisteredServer regserver) {

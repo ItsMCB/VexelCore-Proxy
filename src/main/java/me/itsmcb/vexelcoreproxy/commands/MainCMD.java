@@ -9,9 +9,12 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 import me.itsmcb.vexelcoreproxy.utils.ConfigUtils;
+import me.itsmcb.vexelcoreproxy.utils.TabUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+
+import java.util.List;
 
 public class MainCMD implements SimpleCommand {
 
@@ -69,6 +72,12 @@ public class MainCMD implements SimpleCommand {
             }
         }
         showHelp(source);
+    }
+
+    @Override
+    public List<String> suggest(Invocation invocation) {
+        String[] args = invocation.arguments();
+        return TabUtils.returnTab(args, List.of("reload","version","features","customcommand"));
     }
 
     public void showVersion(CommandSource source) {
