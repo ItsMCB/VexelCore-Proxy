@@ -21,12 +21,11 @@ public class Glist implements SimpleCommand {
 
     private final ProxyServer server;
     private final Toml config;
-    private final Toml special;
     private final Toml language;
+
     public Glist(VexelCoreProxy VCP) {
         this.server = VCP.getProxyServer();
         this.config = VCP.getConfig();
-        this.special = config.getTable("special");
         this.language = config.getTable("language");
     }
 
@@ -41,7 +40,7 @@ public class Glist implements SimpleCommand {
                 return;
             }
         }
-        source.sendMessage(ChatUtils.parseLegacy(special.getString("formatting") + special.getString("serverName") + special.getString("formatting")));
+        source.sendMessage(ChatUtils.parseLegacy(language.getString("bar") + language.getString("serverName") + language.getString("bar")));
         boolean showAllServers = false;
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("-all")) {

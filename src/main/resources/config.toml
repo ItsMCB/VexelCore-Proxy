@@ -6,7 +6,12 @@
 
 prefix = "&aVCP &8>>"
 
-customCommand = [
+[vcp-main]
+enabled = true
+
+[customCommand]
+enabled = true
+data = [
     { type = "playerProxyExecute", newCommand = "hub", execute = "server hub", passArgs = "no" },
     { type = "playerProxyExecute", newCommand = "survival", execute = "server survival", passArgs = "no" },
     { type = "playerProxyExecute", newCommand = "nds", execute = "server natural-disasters", passArgs = "no" },
@@ -16,34 +21,35 @@ customCommand = [
     { type = "playerProxyExecute", newCommand = "td", execute = "server towerdefense", passArgs = "no" },
     { type = "playerProxyExecute", newCommand = "snapshot", execute = "server snapshot", passArgs = "no" },
     { type = "playerProxyExecute", newCommand = "events", execute = "server events", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "walls", execute = "server walls", passArgs = "no" },
     { type = "playerServerExecute", newCommand = "helpplz", execute = "help", passArgs = "yes" },
     # Component Actions: OPEN_URL, RUN_COMMAND, SUGGEST_COMMAND, COPY_TO_CLIPBOARD
-    # All actions must include content, hover, action, and actionValue.
+    # All actions must include content, action, and actionValue.
     { type = "message", newCommand = "secretmessage", components = [ { content = "&3Click me...", hover = "&7Click to copy a secret message!", action = "COPY_TO_CLIPBOARD", actionValue = "You're a nerd!" } ] },
     { type = "message", newCommand = "discord", components = [ { content = "&7Click to join our &3Discord", hover = "&7Click me", action = "OPEN_URL", actionValue = "https://discord.gg/V4ukMbe" } ] },
     { type = "message", newCommand = "website", components = [ { content = "&7Click to view our &3website", hover = "&7Click me", action = "OPEN_URL", actionValue = "https://southhollow.net/" } ] },
     { type = "message", newCommand = "store", components = [ { content = "&7Click to view our &3store", hover = "&7Click me", action = "OPEN_URL", actionValue = "https://southhollow.net/" } ] },
-    { type = "message", newCommand = "help", components = [ { content = "&7Please join our &3/discord &7for support." } ] },
+    { type = "message", newCommand = "help", components = [ { content = "&7Please join our &3/discord &7for support.", hover = "&7Click to run &3/discord", action = "RUN_COMMAND", actionValue = "/discord" } ] },
+    { type = "message", newCommand = "nerd", components = [ { content = "&7You're a nerd", action = "RUN_COMMAND", actionValue = "/helpplz" } ] },
 ]
+
+[glist]
+enabled = true
 
 [permissions]
 staff = "vcp.staff" # To execute /vcp help and /vcp reload
 glist = "vcp.glist" # To view custom /glist
 
-[features]
-vcp-main = true
-customCommand = true
-customGlist = true
-
-[special]
-formatting = "&r&8&m                 "
-serverName = "&aYour Server Name"
-
 [language]
+serverName = "&aSouthHollow Network"
+bar = "&r&8&m                 "
 helpL1 = "&3/vcp &7help &8- &7Displays these help chat messages"
 helpL2 = "&3/vcp &7version &8- &7Displays version information"
 helpL3 = "&3/vcp &7reload &8- &7Reloads plugin config."
-helpL4 = "&3Important Note: &7This plugin is modular. Please check the config.toml file to see which features you want to enable and or customize."
+helpL4 = "&3/vcp &7features &8- &7Displays the enabled plugin features"
+helpL5 = "&3/vcp &7cc &8- &7Displays help for custom commands"
+helpL6 = "&3Important Note: &7This plugin is modular. Please check the config.toml file to see which features you want to enable and or customize."
+helpC1 = "&7CC help coming soon... Use &3/vcp cc list &7to preview currently loaded custom commands."
 reloadedConfig = "&7The configuration has been reloaded."
 noPermission = "&c(!) &7You do not have the required permission for this command!"
 invalidUsage = "&7Usage: "
