@@ -36,9 +36,13 @@ data = [
 [glist]
 enabled = true
 
+[jump]
+enabled = true
+
 [permissions]
 staff = "vcp.staff" # To execute /vcp help and /vcp reload
 glist = "vcp.glist" # To view custom /glist
+jump = "vcp.jump" # To execute /jump <player>
 
 [language]
 serverName = "&aSouthHollow Network"
@@ -54,3 +58,5 @@ reloadedConfig = "&7The configuration has been reloaded."
 noPermission = "&c(!) &7You do not have the required permission for this command!"
 invalidUsage = "&7Usage: "
 canOnlyBeExecutedByAPlayer = "&c(!) &7This can only be executed by a player!"
+creatingConnectionRequest = "&7Creating connection request to &3%server%&7..."
+alreadyConnected = "&cYou're already connected to that server!"

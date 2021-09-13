@@ -2,6 +2,7 @@ package me.itsmcb.vexelcoreproxy.utils;
 
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.commands.Glist;
+import me.itsmcb.vexelcoreproxy.commands.Jump;
 import me.itsmcb.vexelcoreproxy.commands.MainCMD;
 import me.itsmcb.vexelcoreproxy.features.CustomCommand;
 
@@ -54,6 +55,9 @@ public class ConfigUtils {
         if (instance.getConfig().getTable("glist").getBoolean("enabled")) {
             VelocityUtils.registerCommand(new String[] {"glist"},new Glist(instance),instance);
         }
+        if (instance.getConfig().getTable("jump").getBoolean("enabled")) {
+            VelocityUtils.registerCommand(new String[] {"jump"},new Jump(instance),instance);
+        }
     }
 
     public static void unloadFeatures(VexelCoreProxy instance) {
@@ -65,6 +69,9 @@ public class ConfigUtils {
         }
         if (instance.getConfig().getTable("glist").getBoolean("enabled")) {
             instance.getProxyServer().getCommandManager().unregister("glist");
+        }
+        if (instance.getConfig().getTable("jump").getBoolean("enabled")) {
+            instance.getProxyServer().getCommandManager().unregister("jump");
         }
     }
 }

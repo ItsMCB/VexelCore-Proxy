@@ -62,8 +62,7 @@ public class VexelCoreProxy {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         try {
             ConfigUtils.loadConfigs(instance,false);
-            int pluginId = 12763;
-            metricsFactory.make(this, pluginId);
+            metricsFactory.make(this, 12763); // bStats
         } catch (Exception e) {
             e.printStackTrace();
             logger.warn("An error occurred while initializing VexelCore for Velocity. For the purpose of debugging, a shutdown has not been triggered.");

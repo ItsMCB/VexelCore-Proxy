@@ -3,7 +3,6 @@ package me.itsmcb.vexelcoreproxy.utils;
 import com.velocitypowered.api.proxy.ProxyServer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TabUtils {
@@ -40,7 +39,6 @@ public class TabUtils {
         if (args.length > tabComplete.length) {
             return getEmpty();
         } else {
-            List<String> nerd = tabComplete[args.length-1];
             return tabComplete[args.length-1];
         }
     }
