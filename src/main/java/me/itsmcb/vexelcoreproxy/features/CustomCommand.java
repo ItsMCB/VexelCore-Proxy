@@ -46,8 +46,7 @@ public class CustomCommand implements SimpleCommand {
                 return;
             }
             // Not a ppe cc, execute through server
-            if (source instanceof Player) {
-                Player p = (Player) source;
+            if (source instanceof Player p) {
                 p.spoofChatInput("/" + execute);
                 return;
             }

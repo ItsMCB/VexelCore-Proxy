@@ -34,8 +34,7 @@ public class Glist implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (source instanceof Player) {
-            Player p = (Player) source;
+        if (source instanceof Player p) {
             if (!p.hasPermission(config.getTable("permissions").getString("glist"))) {
                 p.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
                 return;

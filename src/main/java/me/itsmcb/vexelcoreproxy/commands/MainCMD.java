@@ -22,6 +22,9 @@ public class MainCMD implements SimpleCommand {
     private final VexelCoreProxy instance;
     private final Toml language;
     private final Toml glist;
+    private final Toml customCommand;
+    private final Toml jump;
+    private final Toml broadcast;
     private final String pluginName;
     private final String pluginVersion;
     public MainCMD(VexelCoreProxy instance) {
@@ -31,6 +34,9 @@ public class MainCMD implements SimpleCommand {
         this.language = config.getTable("language");
         PluginDescription pluginDescription = instance.getProxyServer().getPluginManager().getPlugin("vexelcore").get().getDescription();
         this.glist = config.getTable("glist");
+        this.customCommand = config.getTable("customCommand");
+        this.jump = config.getTable("jump");
+        this.broadcast = config.getTable("broadcast");
         this.pluginName = pluginDescription.getName().get();
         this.pluginVersion = pluginDescription.getVersion().get();
     }
@@ -39,8 +45,7 @@ public class MainCMD implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (source instanceof Player) {
-            Player p = (Player) source;
+        if (source instanceof Player p) {
             if (!p.hasPermission(config.getTable("permissions").getString("staff"))) {
                 p.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
                 return;
@@ -100,10 +105,25 @@ public class MainCMD implements SimpleCommand {
     }
 
     public void showEnabledFeatures(CommandSource source) {
-        if (glist.getBoolean("enabled")) {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Custom Glist"));
+        if (customCommand.getBoolean("enabled")) {
+            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Custom Commands"));
         } else {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Custom Glist"));
+            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Custom Commands"));
+        }
+        if (glist.getBoolean("enabled")) {
+            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Better Glist"));
+        } else {
+            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Better Glist"));
+        }
+        if (jump.getBoolean("enabled")) {
+            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Jump"));
+        } else {
+            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Jump"));
+        }
+        if (broadcast.getBoolean("enabled")) {
+            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Broadcast"));
+        } else {
+            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Broadcast"));
         }
     }
 

@@ -68,5 +68,4 @@ public class VexelCoreProxy {
             logger.warn("An error occurred while initializing VexelCore for Velocity. For the purpose of debugging, a shutdown has not been triggered.");
         }
     }
-
 }

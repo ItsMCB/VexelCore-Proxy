@@ -8,7 +8,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 import me.itsmcb.vexelcoreproxy.utils.TabUtils;
-
 import java.util.List;
 
 public class Jump implements SimpleCommand {
@@ -27,8 +26,7 @@ public class Jump implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (source instanceof Player) {
-            Player player = (Player) source;
+        if (source instanceof Player player) {
             if (!player.hasPermission(config.getTable("permissions").getString("jump"))) {
                 player.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
                 return;
@@ -37,10 +35,10 @@ public class Jump implements SimpleCommand {
                 server.getAllPlayers().forEach(networkPlayer -> {
                     if (networkPlayer.getUsername().equalsIgnoreCase(args[0])) {
                         String target_server_name = networkPlayer.getCurrentServer().get().getServer().getServerInfo().getName();
-                        player.sendMessage(ChatUtils.parseLegacy(language.getString("creatingConnectionRequest").replace("%server%",target_server_name)));
                         if (player.getCurrentServer().get().getServerInfo().getName().equals(target_server_name)) {
                             player.sendMessage(ChatUtils.parseLegacy(language.getString("alreadyConnected")));
                         } else {
+                            player.sendMessage(ChatUtils.parseLegacy(language.getString("creatingConnectionRequest").replace("%server%",target_server_name)));
                             player.createConnectionRequest(networkPlayer.getCurrentServer().get().getServer()).connect().join();
                         }
                     }
