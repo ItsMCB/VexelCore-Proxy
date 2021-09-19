@@ -8,32 +8,47 @@ We have quite a few!
 
 ## Broadcast
 Send chat, title and action bar messages to the whole network or specific servers.
+
+Usage: `/broadcast <title/actionbar/chat> <server name> <message>`
 ![](https://i.imgur.com/qANjVrO.png)
 
 ## Player Information
 Get detailed information about a player's connection.
+
+Usage: `/playerinformation <online player name>`
 ![](https://i.imgur.com/GwwL9vJ.png)
 ![](https://i.imgur.com/J8HcQtK.png)
 ![](https://i.imgur.com/XMvHyzc.png)
 
 ## Better Global List
 Provides detailed information about the servers connected to your proxy.
+
+Usage: `/glist [-all]`
 ![Minecraft Screenshot](https://i.imgur.com/5wnBRzJ.png)
 
 ## Custom Commands
 Easily create commands that send messages or are aliases.
+
+Usage: Edit the configuration file. CC's can be viewed in-game with `/vcp cc list`
 
 #### Discord Command Example
 ```toml
 { type = "message", newCommand = "discord", components = [ { content = "&7Click to join our &3Discord", hover = "&eClick if you're a nerd!", action = "OPEN_URL", actionValue = "https://discord.gg/V4ukMbe" } ] },
 ```
 
-
 [![YT Video Thumbnail](https://img.youtube.com/vi/jknCGCBA-rw/sddefault.jpg)](https://www.youtube.com/watch?v=jknCGCBA-rw)
 
+## Better HelpOp
+Allows players to alert online staff that they need help.
+
+Usage: `/helpop <message to staff>`
+![Player View](https://i.imgur.com/PSys5Wk.png)
+![Staff View](https://i.imgur.com/5mq0K54.png)
 
 ## Jump
 Not sure where a player is? Use jump to be sent to the current server they're on!
+
+Usage: `/jump <online player name>`
 ![](https://i.imgur.com/Gw1gFbE.png)
 ![](https://i.imgur.com/6ftY29S.png)
 

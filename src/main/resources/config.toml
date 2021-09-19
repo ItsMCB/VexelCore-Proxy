@@ -50,12 +50,17 @@ consoleName = "CONSOLE" # The %sender% variable name if the broadcast is sent th
 [playerInformation]
 enabled = true
 
+[helpOp]
+enabled = true
+
 [permissions]
 staff = "vcp.staff" # for /vcp
 glist = "vcp.glist" # for /glist
 jump = "vcp.jump" # for /jump
 broadcast = "vcp.broadcast" # for /broadcast
 playerInformation = "vcp.playerinformation"
+helpop = "vcp.helpop"
+seeHelpOp = "vcp.seeHelpOp"
 
 [language]
 serverName = "&aSouthHollow Network"
@@ -95,3 +100,6 @@ pinfoRPL2 = "&7Hash:&3"
 pinfoRPL3 = "&7Origin:&3"
 pinfoRPL4 = "&7Click to open the pack URL"
 playerResourcePackNotFound = "&7Player doesn't have a resource pack applied"
+helpOpStaffAlert = "&3%requester% &7made a help request in &3%server% &7for reason: &3%reason%"
+helpOpConfirmation = "&7Online staff have been alerted to your help request. If you still need support, visit &3#support &7in our &3/discord"
+clickToTeleport = "&7Click to join %server%"

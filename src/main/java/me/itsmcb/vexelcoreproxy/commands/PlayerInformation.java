@@ -84,7 +84,6 @@ public class PlayerInformation implements SimpleCommand {
         source.sendMessage(component);
     }
 
-
     public void sendServerInfo(CommandSource source, Player targetPlayer) {
         ServerInfo serverInfo = targetPlayer.getCurrentServer().get().getServerInfo();
         TextComponent hover = ChatUtils.parseLegacy(
@@ -95,6 +94,7 @@ public class PlayerInformation implements SimpleCommand {
         TextComponent component = ChatUtils.parseLegacy(language.getString("pinfoServerL0")).hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.runCommand("/server " + serverInfo.getName()));
         source.sendMessage(component);
     }
+
     @Override
     public List<String> suggest(Invocation invocation) {
         return TabUtils.returnTab(invocation.arguments(), TabUtils.getAllPlayers(server));

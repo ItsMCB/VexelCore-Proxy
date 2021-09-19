@@ -24,6 +24,7 @@ public class MainCMD implements SimpleCommand {
     private final Toml jump;
     private final Toml broadcast;
     private final Toml playerinformation;
+    private final Toml helpop;
     private final String pluginName;
     private final String pluginVersion;
     public MainCMD(VexelCoreProxy instance) {
@@ -36,6 +37,7 @@ public class MainCMD implements SimpleCommand {
         this.jump = config.getTable("jump");
         this.broadcast = config.getTable("broadcast");
         this.playerinformation = config.getTable("playerInformation");
+        this.helpop = config.getTable("helpOp");
         this.pluginName = pluginDescription.getName().get();
         this.pluginVersion = pluginDescription.getVersion().get();
     }
@@ -103,29 +105,34 @@ public class MainCMD implements SimpleCommand {
 
     public void showEnabledFeatures(CommandSource source) {
         if (customCommand.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Custom Commands");
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Custom Commands");
         } else {
             ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Custom Commands");
         }
         if (glist.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Better Glist");
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Better Glist");
         } else {
             ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Better Glist");
         }
         if (jump.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Jump");
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Jump");
         } else {
             ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Jump");
         }
         if (broadcast.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Broadcast");
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Broadcast");
         } else {
             ChatUtils.sendMsg(source,"&8[&cDisabled&8] &3Broadcast");
         }
         if (playerinformation.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Player Information");
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Player Information");
         } else {
             ChatUtils.sendMsg(source,"&8[&cDisabled&8] &3Player Information");
+        }
+        if (helpop.getBoolean("enabled")) {
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Better HelpOp");
+        } else {
+            ChatUtils.sendMsg(source,"&8[&cDisabled&8] &3Better HelpOp");
         }
     }
 

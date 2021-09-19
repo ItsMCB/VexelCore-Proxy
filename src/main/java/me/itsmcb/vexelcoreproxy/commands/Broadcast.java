@@ -89,7 +89,7 @@ public class Broadcast implements SimpleCommand {
             }
         }
         if (args.length < 2) {
-            ChatUtils.sendMsg(source, language.getString("invalidUsage"), "/broadcast <title/actionbar/chat> <player/server> <message>");
+            ChatUtils.sendMsg(source, language.getString("invalidUsage"), "/broadcast <title/actionbar/chat> <server name> <message>");
         }
     }
 

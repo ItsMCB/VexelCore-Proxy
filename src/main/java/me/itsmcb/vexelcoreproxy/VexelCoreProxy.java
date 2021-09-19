@@ -23,11 +23,11 @@ import java.nio.file.Path;
 )
 public class VexelCoreProxy {
 
-    private ProxyServer server;
-    private Logger logger;
-    private Path dataDirectory;
+    private final ProxyServer server;
+    private final Logger logger;
+    private final Path dataDirectory;
     private Toml toml;
-    private VexelCoreProxy instance;
+    private final VexelCoreProxy instance;
     private final Metrics.Factory metricsFactory;
 
     public Path getDataDirectory() { return dataDirectory; }

@@ -62,6 +62,9 @@ public class ConfigUtils {
         if (instance.getConfig().getTable("playerInformation").getBoolean("enabled")) {
             VelocityUtils.registerCommand(new String[] {"playerInformation"},new PlayerInformation(instance),instance);
         }
+        if (instance.getConfig().getTable("helpOp").getBoolean("enabled")) {
+            VelocityUtils.registerCommand(new String[] {"helpop"},new HelpOp(instance),instance);
+        }
     }
 
     public static void unloadFeatures(VexelCoreProxy instance) {
@@ -82,6 +85,9 @@ public class ConfigUtils {
         }
         if (instance.getConfig().getTable("playerInformation").getBoolean("enabled")) {
             instance.getProxyServer().getCommandManager().unregister("playerInformation");
+        }
+        if (instance.getConfig().getTable("helpOp").getBoolean("enabled")) {
+            instance.getProxyServer().getCommandManager().unregister("helpop");
         }
     }
 }
