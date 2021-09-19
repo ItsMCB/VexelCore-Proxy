@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConfigUtils {
 
-    public static void loadConfigs(VexelCoreProxy instance, Boolean reload) {
+    public static void loadConfigs(VexelCoreProxy instance, Boolean isReload) {
         long startTime = System.nanoTime();
-        if (reload) {
+        if (isReload) {
             unloadFeatures(instance);
         }
         instance.setConfig(FileUtils.getTomlConfig(instance.getDataDirectory(),"config.toml",instance));
@@ -34,6 +34,10 @@ public class ConfigUtils {
         });
         long endTime = System.nanoTime();
         instance.getLogger().info("Loaded " + amountOfRegisteredCC + " custom command(s) into memory in " + TimeUtils.convertDurationToMs(startTime,endTime));
+    }
+
+    public static int getAmountOfCustomCommands(VexelCoreProxy instance) {
+        return instance.getConfig().getTable("customCommand").getTables("data").size();
     }
 
     public static void unsetCustomCommands(VexelCoreProxy instance) {

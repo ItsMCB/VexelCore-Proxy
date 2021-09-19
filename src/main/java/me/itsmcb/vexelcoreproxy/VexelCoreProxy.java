@@ -9,9 +9,12 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.itsmcb.vexelcoreproxy.extras.Metrics;
 import me.itsmcb.vexelcoreproxy.utils.ConfigUtils;
+import me.itsmcb.vexelcoreproxy.utils.MetricsUtils;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 @Plugin(
         id = "vexelcore",
@@ -53,10 +56,10 @@ public class VexelCoreProxy {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         try {
             ConfigUtils.loadConfigs(instance,false);
-            metricsFactory.make(this, 12763); // bStats
+            MetricsUtils.registerMetrics(this, 12763, metricsFactory);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.warn("An error occurred while initializing VexelCore for Velocity. For the purpose of debugging, a shutdown has not been triggered.");
+            logger.warn("An error occurred while initializing VexelCore for Velocity.");
         }
     }
 }

@@ -13,6 +13,7 @@ enabled = true
 enabled = true
 data = [
     { type = "playerProxyExecute", newCommand = "hub", execute = "server hub", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "lobby", execute = "server hub", passArgs = "no" },
     { type = "playerProxyExecute", newCommand = "survival", execute = "server survival", passArgs = "no" },
     { type = "playerProxyExecute", newCommand = "nds", execute = "server natural-disasters", passArgs = "no" },
     { type = "playerProxyExecute", newCommand = "nds2", execute = "server natural-disasters2", passArgs = "no" },
@@ -30,6 +31,7 @@ data = [
     { type = "message", newCommand = "website", components = [ { content = "&7Click to view our &3website", hover = "&7Click me", action = "OPEN_URL", actionValue = "https://southhollow.net/" } ] },
     { type = "message", newCommand = "store", components = [ { content = "&7Click to view our &3store", hover = "&7Click me", action = "OPEN_URL", actionValue = "https://store.southhollow.net/" } ] },
     { type = "playerProxyExecute", newCommand = "buy", execute = "store", passArgs = "no" },
+    { type = "playerProxyExecute", newCommand = "donate", execute = "store", passArgs = "no" },
     { type = "message", newCommand = "help", components = [ { content = "&7Please join our &3/discord &7for support.", hover = "&7Click to run &3/discord", action = "RUN_COMMAND", actionValue = "/discord" } ] },
     { type = "message", newCommand = "nerd", components = [ { content = "&7You're a nerd", action = "RUN_COMMAND", actionValue = "I'm a nerd!" } ] },
 ]

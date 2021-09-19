@@ -313,6 +313,7 @@ public class Metrics {
     private void sendData(JsonObjectBuilder.JsonObject data) throws Exception {
       if (logSentData) {
         infoLogger.accept("Sent bStats metrics data: " + data.toString());
+        System.out.println("Sent bStats metrics data: " + data); // For debug
       }
       String url = String.format(REPORT_URL, platform);
       HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
