@@ -1,10 +1,7 @@
 package me.itsmcb.vexelcoreproxy.utils;
 
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
-import me.itsmcb.vexelcoreproxy.commands.Broadcast;
-import me.itsmcb.vexelcoreproxy.commands.Glist;
-import me.itsmcb.vexelcoreproxy.commands.Jump;
-import me.itsmcb.vexelcoreproxy.commands.MainCMD;
+import me.itsmcb.vexelcoreproxy.commands.*;
 import me.itsmcb.vexelcoreproxy.features.CustomCommand;
 
 import java.util.HashMap;
@@ -62,6 +59,9 @@ public class ConfigUtils {
         if (instance.getConfig().getTable("broadcast").getBoolean("enabled")) {
             VelocityUtils.registerCommand(new String[] {"broadcast"},new Broadcast(instance),instance);
         }
+        if (instance.getConfig().getTable("playerInformation").getBoolean("enabled")) {
+            VelocityUtils.registerCommand(new String[] {"playerInformation"},new PlayerInformation(instance),instance);
+        }
     }
 
     public static void unloadFeatures(VexelCoreProxy instance) {
@@ -79,6 +79,9 @@ public class ConfigUtils {
         }
         if (instance.getConfig().getTable("broadcast").getBoolean("enabled")) {
             instance.getProxyServer().getCommandManager().unregister("broadcast");
+        }
+        if (instance.getConfig().getTable("playerInformation").getBoolean("enabled")) {
+            instance.getProxyServer().getCommandManager().unregister("playerInformation");
         }
     }
 }

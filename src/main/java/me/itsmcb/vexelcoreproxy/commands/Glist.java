@@ -34,13 +34,11 @@ public class Glist implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (source instanceof Player p) {
-            if (!p.hasPermission(config.getTable("permissions").getString("glist"))) {
-                p.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
-                return;
-            }
+        if (!source.hasPermission(config.getTable("permissions").getString("glist"))) {
+            ChatUtils.sendMsg(source, config.getString("prefix"), language.getString("noPermission"));
+            return;
         }
-        source.sendMessage(ChatUtils.parseLegacy(language.getString("bar") + language.getString("serverName") + language.getString("bar")));
+        ChatUtils.sendMsg(source,language.getString("bar"),language.getString("serverName"),language.getString("bar"));
         boolean showAllServers = false;
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("-all")) {
@@ -55,7 +53,6 @@ public class Glist implements SimpleCommand {
                 sendServerPlayers(source, regserver);
             }
         }
-        
         if (!showAllServers) {
             source.sendMessage(ChatUtils.parseLegacy("&7To view all servers despite player count, do &3/glist -all"));
         }

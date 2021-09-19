@@ -35,11 +35,11 @@ public class Broadcast implements SimpleCommand {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
         String sender = broadcast.getString("consoleName");
+        if (!source.hasPermission(config.getTable("permissions").getString("broadcast"))) {
+            ChatUtils.sendMsg(source, config.getString("prefix"), language.getString("noPermission"));
+            return;
+        }
         if (source instanceof Player player) {
-            if (!player.hasPermission(config.getTable("permissions").getString("broadcast"))) {
-                player.sendMessage(ChatUtils.toComponent(new String[]{config.getString("prefix"), language.getString("noPermission")}));
-                return;
-            }
             sender = player.getUsername();
         }
         if (args.length > 2) {
@@ -62,7 +62,6 @@ public class Broadcast implements SimpleCommand {
                         }
                     });
                 }
-                source.sendMessage(ChatUtils.parseLegacy(language.getString("broadcastSentSuccessfully")));
             }
             if (args[0].equalsIgnoreCase("actionbar")) {
                 if (args[1].equalsIgnoreCase("all")) {
@@ -74,7 +73,6 @@ public class Broadcast implements SimpleCommand {
                         }
                     });
                 }
-                source.sendMessage(ChatUtils.parseLegacy(language.getString("broadcastSentSuccessfully")));
             }
             if (args[0].equalsIgnoreCase("chat") || broadcast.getBoolean("alwaysSendChatBroadcast")) {
                 TextComponent final_msg = Component.text().append(bkInfo).append(ChatUtils.parseLegacy(" " + bcmsg)).build();
@@ -87,11 +85,11 @@ public class Broadcast implements SimpleCommand {
                         }
                     });
                 }
-                source.sendMessage(ChatUtils.toComponent(new String[]{config.getString("prefix"), language.getString("broadcastSentSuccessfully")}).hoverEvent(HoverEvent.showText(bkcontent)));
+                ChatUtils.sendComponentMsg(source, config.getString("prefix"), Component.text(language.getString("broadcastSentSuccessfully")).hoverEvent(HoverEvent.showText(bkcontent)));
             }
         }
         if (args.length < 2) {
-            source.sendMessage(ChatUtils.parseLegacy(language.getString("invalidUsage") + "/broadcast <title/actionbar/chat> <player/server> <message>"));
+            ChatUtils.sendMsg(source, language.getString("invalidUsage"), "/broadcast <title/actionbar/chat> <player/server> <message>");
         }
     }
 

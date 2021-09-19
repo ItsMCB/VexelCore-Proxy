@@ -26,28 +26,28 @@ public class Jump implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
+        if (!source.hasPermission(config.getTable("permissions").getString("jump"))) {
+            ChatUtils.sendMsg(source, config.getString("prefix"), language.getString("noPermission"));
+            return;
+        }
         if (source instanceof Player player) {
-            if (!player.hasPermission(config.getTable("permissions").getString("jump"))) {
-                player.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
-                return;
-            }
             if (args.length == 1) {
                 server.getAllPlayers().forEach(networkPlayer -> {
                     if (networkPlayer.getUsername().equalsIgnoreCase(args[0])) {
                         String target_server_name = networkPlayer.getCurrentServer().get().getServer().getServerInfo().getName();
                         if (player.getCurrentServer().get().getServerInfo().getName().equals(target_server_name)) {
-                            player.sendMessage(ChatUtils.parseLegacy(language.getString("alreadyConnected")));
+                            ChatUtils.sendMsg(source, language.getString("alreadyConnected"));
                         } else {
-                            player.sendMessage(ChatUtils.parseLegacy(language.getString("creatingConnectionRequest").replace("%server%",target_server_name)));
+                            ChatUtils.sendMsg(source,language.getString("creatingConnectionRequest").replace("%server%",target_server_name));
                             player.createConnectionRequest(networkPlayer.getCurrentServer().get().getServer()).connect().join();
                         }
                     }
                 });
                 return;
             }
-            player.sendMessage(ChatUtils.toComponent(new String[] {language.getString("usage"),"&7/jump <player name>"}));
+            ChatUtils.sendMsg(source,language.getString("invalidUsage"), "/jump <player name>");
         } else {
-            source.sendMessage(ChatUtils.parseLegacy(language.getString("canOnlyBeExecutedByAPlayer")));
+            ChatUtils.sendMsg(source,language.getString("canOnlyBeExecutedByAPlayer"));
         }
     }
 

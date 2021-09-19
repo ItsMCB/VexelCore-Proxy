@@ -2,6 +2,7 @@ package me.itsmcb.vexelcoreproxy.utils;
 
 import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 
@@ -22,5 +23,9 @@ public class VelocityUtils {
             e.printStackTrace();
             instance.getLogger().error("An error occurred while registering the command \"" + alises[0] + "\"");
         }
+    }
+
+    public static Player getPlayer(ProxyServer server, String playerName) {
+        return server.getAllPlayers().stream().filter(serverPlayer -> serverPlayer.getUsername().equalsIgnoreCase(playerName)).findAny().orElse(null);
     }
 }

@@ -4,8 +4,6 @@ import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.plugin.PluginDescription;
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 import me.itsmcb.vexelcoreproxy.utils.ConfigUtils;
@@ -25,11 +23,11 @@ public class MainCMD implements SimpleCommand {
     private final Toml customCommand;
     private final Toml jump;
     private final Toml broadcast;
+    private final Toml playerinformation;
     private final String pluginName;
     private final String pluginVersion;
     public MainCMD(VexelCoreProxy instance) {
         this.instance = instance;
-        ProxyServer server = instance.getProxyServer();
         this.config = instance.getConfig();
         this.language = config.getTable("language");
         PluginDescription pluginDescription = instance.getProxyServer().getPluginManager().getPlugin("vexelcore").get().getDescription();
@@ -37,6 +35,7 @@ public class MainCMD implements SimpleCommand {
         this.customCommand = config.getTable("customCommand");
         this.jump = config.getTable("jump");
         this.broadcast = config.getTable("broadcast");
+        this.playerinformation = config.getTable("playerInformation");
         this.pluginName = pluginDescription.getName().get();
         this.pluginVersion = pluginDescription.getVersion().get();
     }
@@ -45,16 +44,14 @@ public class MainCMD implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (source instanceof Player p) {
-            if (!p.hasPermission(config.getTable("permissions").getString("staff"))) {
-                p.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("noPermission")}));
-                return;
-            }
+        if (!source.hasPermission(config.getTable("permissions").getString("staff"))) {
+            ChatUtils.sendMsg(source, config.getString("prefix"), language.getString("noPermission"));
+            return;
         }
         if (args.length >= 1) {
             if (args[0].equalsIgnoreCase("reload")) {
                 ConfigUtils.loadConfigs(instance, true);
-                source.sendMessage(ChatUtils.toComponent(new String[] {config.getString("prefix"),language.getString("reloadedConfig")}));
+                ChatUtils.sendMsg(source,config.getString("prefix"),language.getString("reloadedConfig"));
                 return;
             }
             if (args[0].equalsIgnoreCase("version")) {
@@ -72,7 +69,7 @@ public class MainCMD implements SimpleCommand {
                         return;
                     }
                 }
-                source.sendMessage(ChatUtils.toComponent(language.getString("helpC1")));
+                ChatUtils.sendMsg(source,language.getString("helpC1"));
                 return;
             }
         }
@@ -86,44 +83,49 @@ public class MainCMD implements SimpleCommand {
     }
 
     public void showVersion(CommandSource source) {
-        source.sendMessage(ChatUtils.parseLegacy("&7Running &a" + pluginName + " v" + pluginVersion));
+        ChatUtils.sendMsg(source, config.getString("prefix"), "&7Running &a" + pluginName + " v" + pluginVersion);
         Component updateTXT = Component.text("https://github.com/Vexelosity/VexelCore-Proxy").color(NamedTextColor.DARK_AQUA).clickEvent(ClickEvent.openUrl("https://github.com/Vexelosity/VexelCore-Proxy"));
-        source.sendMessage(ChatUtils.parseLegacy("&7The latest version can be downloaded at ").append(updateTXT));
+        source.sendMessage(ChatUtils.parseLegacy("&7The latest version can be downloaded at").append(updateTXT));
         Component setupGuideTXT = Component.text("https://github.com/Vexelosity/VexelCore-Proxy/wiki/Setup-Guide").color(NamedTextColor.DARK_AQUA).clickEvent(ClickEvent.openUrl("https://github.com/Vexelosity/VexelCore-Proxy/wiki/Setup-Guide"));
-        source.sendMessage(ChatUtils.parseLegacy("&7The setup guide can be found at ").append(setupGuideTXT));
-        source.sendMessage(ChatUtils.parseLegacy("&7Use &3/vcp help &7to view available commands."));
+        source.sendMessage(ChatUtils.parseLegacy("&7The setup guide can be found at").append(setupGuideTXT));
+        ChatUtils.sendMsg(source, "&7Use &3/vcp help &7to view available commands.");
     }
 
     public void showHelp(CommandSource source) {
-        source.sendMessage(ChatUtils.parseLegacy(language.getString("bar") + "&a" + pluginName + " v" + pluginVersion + language.getString("bar") ));
-        source.sendMessage(ChatUtils.toComponent(language.getString("helpL1")));
-        source.sendMessage(ChatUtils.toComponent(language.getString("helpL2")));
-        source.sendMessage(ChatUtils.toComponent(language.getString("helpL3")));
-        source.sendMessage(ChatUtils.toComponent(language.getString("helpL4")));
-        source.sendMessage(ChatUtils.toComponent(language.getString("helpL5")));
-        source.sendMessage(ChatUtils.toComponent(language.getString("helpL6")));
+        ChatUtils.sendMsg(source,language.getString("bar") + "&a" + pluginName + " v" + pluginVersion + language.getString("bar"));
+        ChatUtils.sendMsg(source,language.getString("helpL1"));
+        ChatUtils.sendMsg(source,language.getString("helpL2"));
+        ChatUtils.sendMsg(source,language.getString("helpL3"));
+        ChatUtils.sendMsg(source,language.getString("helpL4"));
+        ChatUtils.sendMsg(source,language.getString("helpL5"));
+        ChatUtils.sendMsg(source,language.getString("helpL6"));
     }
 
     public void showEnabledFeatures(CommandSource source) {
         if (customCommand.getBoolean("enabled")) {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Custom Commands"));
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Custom Commands");
         } else {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Custom Commands"));
+            ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Custom Commands");
         }
         if (glist.getBoolean("enabled")) {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Better Glist"));
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Better Glist");
         } else {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Better Glist"));
+            ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Better Glist");
         }
         if (jump.getBoolean("enabled")) {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Jump"));
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Jump");
         } else {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Jump"));
+            ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Jump");
         }
         if (broadcast.getBoolean("enabled")) {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&aEnabled&8] &7Broadcast"));
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Broadcast");
         } else {
-            source.sendMessage(ChatUtils.parseLegacy("&8[&cDisabled&8] &3Broadcast"));
+            ChatUtils.sendMsg(source,"&8[&cDisabled&8] &3Broadcast");
+        }
+        if (playerinformation.getBoolean("enabled")) {
+            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &7Player Information");
+        } else {
+            ChatUtils.sendMsg(source,"&8[&cDisabled&8] &3Player Information");
         }
     }
 

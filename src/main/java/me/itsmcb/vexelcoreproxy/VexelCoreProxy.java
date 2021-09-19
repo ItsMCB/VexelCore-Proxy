@@ -7,20 +7,11 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import me.itsmcb.vexelcoreproxy.commands.Glist;
-import me.itsmcb.vexelcoreproxy.commands.MainCMD;
 import me.itsmcb.vexelcoreproxy.extras.Metrics;
-import me.itsmcb.vexelcoreproxy.features.CustomCommand;
 import me.itsmcb.vexelcoreproxy.utils.ConfigUtils;
-import me.itsmcb.vexelcoreproxy.utils.FileUtils;
-import me.itsmcb.vexelcoreproxy.utils.TimeUtils;
-import me.itsmcb.vexelcoreproxy.utils.VelocityUtils;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Plugin(
         id = "vexelcore",

@@ -1,6 +1,8 @@
 package me.itsmcb.vexelcoreproxy.utils;
 
 import com.moandjiezana.toml.Toml;
+import com.velocitypowered.api.command.CommandSource;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -11,8 +13,12 @@ import java.util.Arrays;
 
 public class ChatUtils {
 
-    public static TextComponent parseLegacy(String input) {
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(input);
+    public static TextComponent parseLegacy(String... input) {
+        StringBuilder sb = new StringBuilder();
+        for (String inputPart : input) {
+            sb.append(inputPart + " ");
+        }
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(sb.toString());
     }
 
     public static TextComponent toComponent(String input) {
@@ -54,5 +60,29 @@ public class ChatUtils {
             }
         });
         return tcList;
+    }
+
+    public static void sendMsg(CommandSource source, String... input) {
+        StringBuilder sb = new StringBuilder();
+        for (String inputPart : input) {
+            sb.append(inputPart + " ");
+        }
+        source.sendMessage(parseLegacy(sb.toString()));
+    }
+
+    public static void sendComponentMsg(CommandSource source, String input, TextComponent... textComponents) {
+        TextComponent tcFinal = Component.empty();
+        for (TextComponent textComponent : textComponents) {
+            tcFinal.append(textComponent).append(ChatUtils.parseLegacy(" "));
+        }
+        source.sendMessage(parseLegacy(input + " ").append(tcFinal));
+    }
+
+    public static void sendComponentMsg(CommandSource source, TextComponent... textComponents) {
+        TextComponent tcFinal = Component.empty();
+        for (TextComponent textComponent : textComponents) {
+            tcFinal.append(textComponent).append(ChatUtils.parseLegacy(" "));
+        }
+        source.sendMessage(tcFinal);
     }
 }
