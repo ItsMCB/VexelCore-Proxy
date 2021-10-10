@@ -1,6 +1,5 @@
 package me.itsmcb.vexelcoreproxy.commands;
 
-import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
@@ -10,31 +9,30 @@ import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import org.spongepowered.configurate.CommentedConfigurationNode;
 
 public class HelpOp implements SimpleCommand {
 
     private final ProxyServer server;
-    private final Toml config;
-    private final Toml language;
-    private final Toml permissions;
+    private final CommentedConfigurationNode config;
+    private final CommentedConfigurationNode language;
 
     public HelpOp(VexelCoreProxy VCP) {
         this.server = VCP.getProxyServer();
-        this.config = VCP.getConfig();
-        this.language = config.getTable("language");
-        this.permissions = config.getTable("permissions");
+        this.config = VCP.getYamlConfig().get();
+        this.language = VCP.getLang().get();
     }
 
     @Override
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (!source.hasPermission(config.getTable("permissions").getString("helpop"))) {
-            ChatUtils.sendMsg(source, config.getString("prefix"), language.getString("noPermission"));
+        if (!source.hasPermission(config.node("helpop").node("use-permission").getString())) {
+            ChatUtils.sendMsg(source, language.node("general").node("prefix").getString(), language.node("error").node("noPermission").getString());
             return;
         }
         if (args.length == 0) {
-            ChatUtils.sendMsg(source, language.getString("invalidUsage"), "/helpop <message to staff>");
+            ChatUtils.sendMsg(source, language.node("error").node("invalidUsage").getString(), "/helpop <message to staff>");
             return;
         }
         if (source instanceof Player requester) {
@@ -42,27 +40,27 @@ public class HelpOp implements SimpleCommand {
             String requesterServer = requester.getCurrentServer().get().getServerInfo().getName();
             // Show requester their message and assure them that online staff will see it.
             // If they are staff who see the help requests, they don't get shown the confirmation.
-            if (!requester.hasPermission(permissions.getString("seeHelpOp"))) {
-                ChatUtils.sendMsg(source, language.getString("helpOpStaffAlert")
-                        .replace("%requester%", requester.getUsername())
-                        .replace("%server%", requesterServer)
-                        .replace("%reason%", reason)
+            if (!requester.hasPermission(config.node("helpop").node("see-help-op-permission").getString())) {
+                ChatUtils.sendMsg(source, language.node("helpop").node("staffAlert").getString()
+                        .replace("[requester]", requester.getUsername())
+                        .replace("[serverName]", requesterServer)
+                        .replace("[reason]", reason)
                 );
-                ChatUtils.sendMsg(source, language.getString("helpOpConfirmation"));
+                ChatUtils.sendMsg(source, language.node("confirmation").node("helpop").getString());
             }
             // Send to online staff
-            server.getAllPlayers().stream().filter(player -> player.hasPermission(permissions.getString("seeHelpOp"))).allMatch(player -> {
-                TextComponent alert = ChatUtils.parseLegacy(language.getString("helpOpStaffAlert")
-                        .replace("%requester%", requester.getUsername())
-                        .replace("%server%", requesterServer)
-                        .replace("%reason%", reason))
-                        .hoverEvent(HoverEvent.showText(ChatUtils.parseLegacy(language.getString("clickToTeleport").replace("%server%", requesterServer))))
+            server.getAllPlayers().stream().filter(player -> player.hasPermission(config.node("helpop").node("see-help-op-permission").getString())).allMatch(player -> {
+                TextComponent alert = ChatUtils.parseLegacy(language.node("helpop").node("staffAlert").getString()
+                        .replace("[requester]", requester.getUsername())
+                        .replace("[serverName]", requesterServer)
+                        .replace("[reason]", reason))
+                        .hoverEvent(HoverEvent.showText(ChatUtils.parseLegacy(language.node("helpop").node("clickToTeleport").getString().replace("[serverName]", requesterServer))))
                         .clickEvent(ClickEvent.runCommand("/server " + requesterServer));
                 player.sendMessage(alert);
                 return true;
             });
         } else {
-            ChatUtils.sendMsg(source, language.getString("canOnlyBeExecutedByAPlayer"));
+            ChatUtils.sendMsg(source, language.node("error").node("canOnlyBeExecutedByAPlayer").getString());
         }
     }
 }

@@ -1,36 +1,20 @@
 package me.itsmcb.vexelcoreproxy.utils;
 
-import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.command.CommandSource;
-import net.kyori.adventure.text.Component;
+import me.itsmcb.vexelcoreproxy.config.main.cc.CCMDComponent;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class ChatUtils {
 
     public static TextComponent parseLegacy(String... input) {
-        StringBuilder sb = new StringBuilder();
-        for (String inputPart : input) {
-            sb.append(inputPart + " ");
-        }
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(sb.toString());
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(String.join(" ", input));
     }
 
-    public static TextComponent toComponent(String input) {
-        return parseLegacy(input);
-    }
-
-    public static TextComponent toComponent(String input[]) {
-        StringBuilder msg = new StringBuilder();
-        Arrays.stream(input).forEach(textValue -> {
-            msg.append(textValue + " ");
-        });
-        return parseLegacy(msg.toString());
+    public static TextComponent toComponent(String ...input) {
+        return parseLegacy(String.join(" ", input));
 
     }
 
@@ -44,45 +28,27 @@ public class ChatUtils {
                 .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.valueOf(action),actionValue));
     }
 
-    public static ArrayList<TextComponent> sendCCMessage(Toml data) {
-        ArrayList<TextComponent> tcList = new ArrayList<>();
-        data.getTables("components").forEach(msgData -> {
-            String action = msgData.getString("action");
-            if (action != null) {
-                if (action.equalsIgnoreCase("open_url") || action.equalsIgnoreCase("run_command") || action.equalsIgnoreCase("suggest_command") || action.equalsIgnoreCase("copy_to_clipboard"))
-                    tcList.add(ChatUtils.clickableComponent(
-                            msgData.getString("content"),
-                            msgData.getString("hover"),
-                            action,
-                            msgData.getString("actionValue")));
-            } else {
-                tcList.add(ChatUtils.parseLegacy(msgData.getString("content")));
-            }
-        });
-        return tcList;
+    public static TextComponent getCCMessage(CCMDComponent data) {
+        String action = data.action();
+        if (action != null) {
+            if (action.equalsIgnoreCase("open_url") || action.equalsIgnoreCase("run_command") || action.equalsIgnoreCase("suggest_command") || action.equalsIgnoreCase("copy_to_clipboard"))
+                return ChatUtils.clickableComponent(
+                        data.content(),
+                        data.hover(),
+                        action,
+                        data.actionValue());
+        } else {
+            return ChatUtils.parseLegacy(data.content());
+        }
+        return null;
     }
 
     public static void sendMsg(CommandSource source, String... input) {
-        StringBuilder sb = new StringBuilder();
-        for (String inputPart : input) {
-            sb.append(inputPart + " ");
-        }
-        source.sendMessage(parseLegacy(sb.toString()));
+        source.sendMessage(parseLegacy(String.join(" ", input)));
     }
 
-    public static void sendComponentMsg(CommandSource source, String input, TextComponent... textComponents) {
-        TextComponent tcFinal = Component.empty();
-        for (TextComponent textComponent : textComponents) {
-            tcFinal.append(textComponent).append(ChatUtils.parseLegacy(" "));
-        }
-        source.sendMessage(parseLegacy(input + " ").append(tcFinal));
+    public static void sendComponentMsg(CommandSource source, String input, TextComponent textComponent) {
+        source.sendMessage(parseLegacy(input + " ").append(textComponent));
     }
 
-    public static void sendComponentMsg(CommandSource source, TextComponent... textComponents) {
-        TextComponent tcFinal = Component.empty();
-        for (TextComponent textComponent : textComponents) {
-            tcFinal.append(textComponent).append(ChatUtils.parseLegacy(" "));
-        }
-        source.sendMessage(tcFinal);
-    }
 }

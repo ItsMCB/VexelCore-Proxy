@@ -9,8 +9,8 @@ We have quite a few!
 ## Broadcast
 Send chat, title and action bar messages to the whole network or specific servers.
 
-Usage: `/broadcast <title/actionbar/chat> <server name> <message>`
-![](https://i.imgur.com/qANjVrO.png)
+Usage: `/broadcast <title/actionbar/chat> <server name/all> <message>`
+![](https://i.imgur.com/6U0ibKx.png)
 
 ## Player Information
 Get detailed information about a player's connection.
@@ -29,11 +29,19 @@ Usage: `/glist [-all]`
 ## Custom Commands
 Easily create commands that send messages or are aliases.
 
-Usage: Edit the configuration file. CC's can be viewed in-game with `/vcp cc list`
+Usage: Edit the configuration file. CC's can be previewed in-game with `/vcp cc list`
 
 #### Discord Command Example
-```toml
-{ type = "message", newCommand = "discord", components = [ { content = "&7Click to join our &3Discord", hover = "&eClick if you're a nerd!", action = "OPEN_URL", actionValue = "https://discord.gg/V4ukMbe" } ] },
+```yaml
+custom-command:
+  enabled: true
+  send-messages:
+    -   new-command: discord
+        components:
+          -   content: '&7Click to join our &3Discord'
+              hover: '&7Click me'
+              action: 'OPEN_URL'
+              action-value: 'https://discord.gg/V4ukMbe'
 ```
 
 [![YT Video Thumbnail](https://img.youtube.com/vi/jknCGCBA-rw/sddefault.jpg)](https://www.youtube.com/watch?v=jknCGCBA-rw)
@@ -53,8 +61,8 @@ Usage: `/jump <online player name>`
 ![](https://i.imgur.com/6ftY29S.png)
 
 ## It's Super Customizable!
-- Almost all messages can be changed from the config.toml
-- All features can be disabled
+- All features can be enabled or disabled in the main configuration file or in-game!
+- Most messages can be changed in the language file!
 
 ### bStats
 Plugin statistics

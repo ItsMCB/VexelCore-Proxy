@@ -1,7 +1,6 @@
 package me.itsmcb.vexelcoreproxy.commands;
 
 import com.google.common.io.BaseEncoding;
-import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
@@ -15,54 +14,59 @@ import me.itsmcb.vexelcoreproxy.utils.VelocityUtils;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
+import org.spongepowered.configurate.CommentedConfigurationNode;
 
 import java.util.List;
 
 public class PlayerInformation implements SimpleCommand {
 
     private final ProxyServer server;
-    private final Toml config;
-    private final Toml language;
+    private final CommentedConfigurationNode config;
+    private final CommentedConfigurationNode language;
 
     public PlayerInformation(VexelCoreProxy VCP) {
         this.server = VCP.getProxyServer();
-        this.config = VCP.getConfig();
-        this.language = config.getTable("language");
+        this.config = VCP.getYamlConfig().get();
+        this.language = VCP.getLang().get();
     }
 
     @Override
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (!source.hasPermission(config.getTable("permissions").getString("playerInformation"))) {
-            ChatUtils.sendMsg(source, config.getString("prefix"), language.getString("noPermission"));
+        if (!source.hasPermission(config.node("player-information").node("permission").getString())) {
+            ChatUtils.sendMsg(source, language.node("general").node("prefix").getString(), language.node("error").node("noPermission").getString());
             return;
         }
-        Player targetPlayer = VelocityUtils.getPlayer(server, args[0]);
-        if (targetPlayer != null) {
-            ChatUtils.sendMsg(source, language.getString("connectionProfileHeader").replace("%player%", targetPlayer.getUsername()));
-            sendUserInfo(source, targetPlayer);
-            sendServerInfo(source, targetPlayer);
-            sendResourcePackInfo(source,targetPlayer);
-        } else {
-            ChatUtils.sendMsg(source, language.getString("playerNotOnline"));
+        if (args.length > 0) {
+            Player targetPlayer = VelocityUtils.getPlayer(server, args[0]);
+            if (targetPlayer != null) {
+                ChatUtils.sendMsg(source, language.node("player-info").node("connectionProfileHeader").getString().replace("[playerName]", targetPlayer.getUsername()));
+                sendUserInfo(source, targetPlayer);
+                sendServerInfo(source, targetPlayer);
+                sendResourcePackInfo(source,targetPlayer);
+            } else {
+                ChatUtils.sendMsg(source, language.node("player-info").node("playerNotOnline").getString());
+            }
+            return;
         }
+        ChatUtils.sendMsg(source, language.node("error").node("invalidUsage").getString(), "/playerinformation <player name>");
     }
 
     public void sendResourcePackInfo(CommandSource source, Player targetPlayer) {
         ResourcePackInfo rpInfo = targetPlayer.getAppliedResourcePack();
-        TextComponent hover = ChatUtils.parseLegacy(language.getString("playerResourcePackNotFound"));
-        TextComponent component = ChatUtils.parseLegacy(language.getString("pinfoRPL0"));
+        TextComponent hover = ChatUtils.parseLegacy(language.node("player-info").node("playerResourcePackNotFound").getString());
+        TextComponent component = ChatUtils.parseLegacy(language.node("player-info").node("pinfoRPL0").getString());
         try {
             hover = ChatUtils.parseLegacy(
-                    language.getString("pinfoRPL1"),
+                    language.node("player-info").node("pinfoRPL1").getString(),
                     rpInfo.getUrl(),
-                    "\n" + language.getString("pinfoRPL2"),
+                    "\n" + language.node("player-info").node("pinfoRPL2").getString(),
                     BaseEncoding.base16().lowerCase().encode(rpInfo.getHash()),
-                    "\n" + language.getString("pinfoRPL3"),
+                    "\n" + language.node("player-info").node("pinfoRPL3").getString(),
                     rpInfo.getOrigin().name().replace("_"," ").toLowerCase(),
-                    "\n" + language.getString("bar"),
-                    "\n" + language.getString("pinfoRPL4"));
+                    "\n" + language.node("general").node("bar").getString(),
+                    "\n" + language.node("player-info").node("pinfoRPL4").getString());
             source.sendMessage(component.hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.openUrl(rpInfo.getUrl())));
         } catch (Exception e) {
             source.sendMessage(component.hoverEvent(HoverEvent.showText(hover)));
@@ -71,27 +75,27 @@ public class PlayerInformation implements SimpleCommand {
 
     public void sendUserInfo(CommandSource source, Player targetPlayer) {
         TextComponent hover = ChatUtils.parseLegacy(
-                language.getString("pinfoUserL1"), targetPlayer.getUsername(),
-                "\n" + language.getString("pinfoUserL2"), targetPlayer.getEffectiveLocale()+"",
-                "\n" + language.getString("pinfoUserL3"), targetPlayer.getUniqueId()+"",
-                "\n" + language.getString("pinfoUserL4"), targetPlayer.getClientBrand() + " " +targetPlayer.getProtocolVersion().getMostRecentSupportedVersion() + " &7(" + targetPlayer.getProtocolVersion().getProtocol() + ")",
-                "\n" + language.getString("pinfoUserL5"), targetPlayer.getPlayerSettings().getViewDistance()+"",
-                "\n" + language.getString("pinfoUserL6"), targetPlayer.getPlayerSettings().getChatMode().name(),
-                "\n" + language.getString("pinfoUserL7"),  targetPlayer.getRemoteAddress().getHostString() + ":" +targetPlayer.getRemoteAddress().getPort(),
-                "\n" + language.getString("bar"),
-                "\n" + language.getString("pinfoUserL8"));
-        TextComponent component = ChatUtils.parseLegacy(language.getString("pinfoUserL0")).hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.suggestCommand(targetPlayer.getUniqueId() + ""));
+                language.node("player-info").node("pinfoUserL1").getString(), targetPlayer.getUsername(),
+                "\n" + language.node("player-info").node("pinfoUserL2").getString(), targetPlayer.getEffectiveLocale()+"",
+                "\n" + language.node("player-info").node("pinfoUserL3").getString(), targetPlayer.getUniqueId()+"",
+                "\n" + language.node("player-info").node("pinfoUserL4").getString(), targetPlayer.getClientBrand() + " " +targetPlayer.getProtocolVersion().getMostRecentSupportedVersion() + " &7(" + targetPlayer.getProtocolVersion().getProtocol() + ")",
+                "\n" + language.node("player-info").node("pinfoUserL5").getString(), targetPlayer.getPlayerSettings().getViewDistance()+"",
+                "\n" + language.node("player-info").node("pinfoUserL6").getString(), targetPlayer.getPlayerSettings().getChatMode().name(),
+                "\n" + language.node("player-info").node("pinfoUserL7").getString(),  targetPlayer.getRemoteAddress().getHostString() + ":" +targetPlayer.getRemoteAddress().getPort(),
+                "\n" + language.node("general").node("bar").getString(),
+                "\n" + language.node("player-info").node("pinfoUserL8").getString());
+        TextComponent component = ChatUtils.parseLegacy(language.node("player-info").node("pinfoUserL0").getString()).hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.suggestCommand(targetPlayer.getUniqueId() + ""));
         source.sendMessage(component);
     }
 
     public void sendServerInfo(CommandSource source, Player targetPlayer) {
         ServerInfo serverInfo = targetPlayer.getCurrentServer().get().getServerInfo();
         TextComponent hover = ChatUtils.parseLegacy(
-                language.getString("pinfoServerL1"), serverInfo.getName(),
-                "\n" + language.getString("pinfoServerL2"), targetPlayer.getPing()+"",
-                "\n" + language.getString("bar"),
-                "\n" + language.getString("pinfoServerL3"));
-        TextComponent component = ChatUtils.parseLegacy(language.getString("pinfoServerL0")).hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.runCommand("/server " + serverInfo.getName()));
+                language.node("player-info").node("pinfoServerL1").getString(), serverInfo.getName(),
+                "\n" + language.node("player-info").node("pinfoServerL2").getString(), targetPlayer.getPing()+"",
+                "\n" + language.node("general").node("bar").getString(),
+                "\n" + language.node("player-info").node("pinfoServerL3").getString());
+        TextComponent component = ChatUtils.parseLegacy(language.node("player-info").node("pinfoServerL0").getString()).hoverEvent(HoverEvent.showText(hover)).clickEvent(ClickEvent.runCommand("/server " + serverInfo.getName()));
         source.sendMessage(component);
     }
 

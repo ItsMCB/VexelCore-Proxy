@@ -1,7 +1,6 @@
 package me.itsmcb.vexelcoreproxy.commands;
 
 import com.google.common.collect.ImmutableList;
-import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
@@ -14,6 +13,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.spongepowered.configurate.CommentedConfigurationNode;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,24 +21,24 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Glist implements SimpleCommand {
 
     private final ProxyServer server;
-    private final Toml config;
-    private final Toml language;
+    private final CommentedConfigurationNode config;
+    private final CommentedConfigurationNode language;
 
     public Glist(VexelCoreProxy VCP) {
         this.server = VCP.getProxyServer();
-        this.config = VCP.getConfig();
-        this.language = config.getTable("language");
+        this.config = VCP.getYamlConfig().get();
+        this.language = VCP.getLang().get();
     }
 
     @Override
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (!source.hasPermission(config.getTable("permissions").getString("glist"))) {
-            ChatUtils.sendMsg(source, config.getString("prefix"), language.getString("noPermission"));
+        if (!source.hasPermission(config.node("glist").node("permission").getString())) {
+            ChatUtils.sendMsg(source, language.node("general").node("prefix").getString(), language.node("error").node("noPermission").getString());
             return;
         }
-        ChatUtils.sendMsg(source,language.getString("bar"),language.getString("serverName"),language.getString("bar"));
+        ChatUtils.sendMsg(source, language.node("general").node("bar").getString(), language.node("general").node("serverName").getString(), language.node("general").node("onlinePlayers").getString().replace("[amountOfOnlinePlayers]",server.getAllPlayers().size()+""), language.node("general").node("bar").getString());
         boolean showAllServers = false;
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("-all")) {

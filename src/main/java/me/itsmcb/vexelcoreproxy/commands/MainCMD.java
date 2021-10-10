@@ -1,43 +1,41 @@
 package me.itsmcb.vexelcoreproxy.commands;
 
-import com.moandjiezana.toml.Toml;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.plugin.PluginDescription;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
+import me.itsmcb.vexelcoreproxy.config.main.cc.CCMDExec;
+import me.itsmcb.vexelcoreproxy.config.main.cc.CCMDMsg;
 import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
 import me.itsmcb.vexelcoreproxy.utils.ConfigUtils;
 import me.itsmcb.vexelcoreproxy.utils.TabUtils;
+import me.itsmcb.vexelcoreproxy.utils.TimeUtils;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainCMD implements SimpleCommand {
 
-    private final Toml config;
+    private final CommentedConfigurationNode config;
     private final VexelCoreProxy instance;
-    private final Toml language;
-    private final Toml glist;
-    private final Toml customCommand;
-    private final Toml jump;
-    private final Toml broadcast;
-    private final Toml playerinformation;
-    private final Toml helpop;
+    private final CommentedConfigurationNode language;
+    private final CommentedConfigurationNode glist;
     private final String pluginName;
     private final String pluginVersion;
+
     public MainCMD(VexelCoreProxy instance) {
         this.instance = instance;
-        this.config = instance.getConfig();
-        this.language = config.getTable("language");
+        this.config = instance.getYamlConfig().get();
+        this.language = instance.getLang().get();
         PluginDescription pluginDescription = instance.getProxyServer().getPluginManager().getPlugin("vexelcore").get().getDescription();
-        this.glist = config.getTable("glist");
-        this.customCommand = config.getTable("customCommand");
-        this.jump = config.getTable("jump");
-        this.broadcast = config.getTable("broadcast");
-        this.playerinformation = config.getTable("playerInformation");
-        this.helpop = config.getTable("helpOp");
+        this.glist = instance.getLang().get().node("glist");
         this.pluginName = pluginDescription.getName().get();
         this.pluginVersion = pluginDescription.getVersion().get();
     }
@@ -46,21 +44,41 @@ public class MainCMD implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
-        if (!source.hasPermission(config.getTable("permissions").getString("staff"))) {
-            ChatUtils.sendMsg(source, config.getString("prefix"), language.getString("noPermission"));
+        if (!source.hasPermission(config.node("main").node("permission").getString())) {
+            ChatUtils.sendMsg(source, language.node("general").node("prefix").getString(), language.node("error").node("noPermission").getString());
             return;
         }
         if (args.length >= 1) {
             if (args[0].equalsIgnoreCase("reload")) {
-                ConfigUtils.loadConfigs(instance, true);
-                ChatUtils.sendMsg(source,config.getString("prefix"),language.getString("reloadedConfig"));
-                return;
-            }
-            if (args[0].equalsIgnoreCase("version")) {
-                showVersion(source);
+                long startTime = System.nanoTime();
+                ConfigUtils.unloadFeatures(instance);
+                instance.getYamlConfig().load();
+                ConfigUtils.loadFeatures(instance);
+                long endTime = System.nanoTime();
+                instance.getLogger().info("All configs have been loaded! Took " + TimeUtils.convertDurationToMs(startTime,endTime));
+                ChatUtils.sendMsg(source, language.node("general").node("prefix").getString(), language.node("confirmation").node("reloadedConfig").getString());
                 return;
             }
             if (args[0].equalsIgnoreCase("features")) {
+                if (args.length >= 3) {
+                    if (config.node(args[2]).isNull()) {
+                        ChatUtils.sendMsg(source, language.node("error").node("featureNotFound").getString());
+                        return;
+                    } else {
+                        boolean enableFeature = !args[1].equalsIgnoreCase("disable");
+                        try {
+                            ConfigUtils.unloadFeatures(instance);
+                            instance.getYamlConfig().get().node(args[2]).node("enabled").set(enableFeature);
+                            instance.getYamlConfig().save();
+                            instance.getYamlConfig().load();
+                            ConfigUtils.loadFeatures(instance);
+                            ChatUtils.sendMsg(source, language.node("confirmation").node("featureStateChangeSuccess").getString().replace("[feature]",args[2]).replace("[state]",Boolean.toString(enableFeature)));
+                        } catch (SerializationException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return;
+                }
                 showEnabledFeatures(source);
                 return;
             }
@@ -71,7 +89,8 @@ public class MainCMD implements SimpleCommand {
                         return;
                     }
                 }
-                ChatUtils.sendMsg(source,language.getString("helpC1"));
+                // Temp
+                try { ChatUtils.sendMsg(source, language.node("helpcc").getList(String.class).get(0)); } catch (Exception ignored) {}
                 return;
             }
         }
@@ -81,73 +100,47 @@ public class MainCMD implements SimpleCommand {
     @Override
     public List<String> suggest(Invocation invocation) {
         String[] args = invocation.arguments();
-        return TabUtils.returnTab(args, List.of("reload","version","features","customcommand"));
-    }
-
-    public void showVersion(CommandSource source) {
-        ChatUtils.sendMsg(source, config.getString("prefix"), "&7Running &a" + pluginName + " v" + pluginVersion);
-        Component updateTXT = Component.text("https://github.com/Vexelosity/VexelCore-Proxy").color(NamedTextColor.DARK_AQUA).clickEvent(ClickEvent.openUrl("https://github.com/Vexelosity/VexelCore-Proxy"));
-        source.sendMessage(ChatUtils.parseLegacy("&7The latest version can be downloaded at").append(updateTXT));
-        Component setupGuideTXT = Component.text("https://github.com/Vexelosity/VexelCore-Proxy/wiki/Setup-Guide").color(NamedTextColor.DARK_AQUA).clickEvent(ClickEvent.openUrl("https://github.com/Vexelosity/VexelCore-Proxy/wiki/Setup-Guide"));
-        source.sendMessage(ChatUtils.parseLegacy("&7The setup guide can be found at").append(setupGuideTXT));
-        ChatUtils.sendMsg(source, "&7Use &3/vcp help &7to view available commands.");
+        return TabUtils.returnTab(args, List.of("features","customcommand","reload"),List.of("enable","disable"),List.of("main","glist","jump","broadcast","player-information","helpop","custom-command"));
     }
 
     public void showHelp(CommandSource source) {
-        ChatUtils.sendMsg(source,language.getString("bar") + "&a" + pluginName + " v" + pluginVersion + language.getString("bar"));
-        ChatUtils.sendMsg(source,language.getString("helpL1"));
-        ChatUtils.sendMsg(source,language.getString("helpL2"));
-        ChatUtils.sendMsg(source,language.getString("helpL3"));
-        ChatUtils.sendMsg(source,language.getString("helpL4"));
-        ChatUtils.sendMsg(source,language.getString("helpL5"));
-        ChatUtils.sendMsg(source,language.getString("helpL6"));
+        ChatUtils.sendMsg(source, language.node("general").node("bar").getString(), "&a" + pluginName + " v" + pluginVersion, language.node("general").node("bar").getString());
+        try { language.node("help").getList(String.class).forEach(msg -> ChatUtils.sendMsg(source, msg)); } catch (Exception ignored) {}
+        Component updateTXT = Component.text("https://github.com/Vexelosity/VexelCore-Proxy").color(NamedTextColor.DARK_AQUA).clickEvent(ClickEvent.openUrl("https://github.com/Vexelosity/VexelCore-Proxy"));
+        source.sendMessage(ChatUtils.parseLegacy("&7The latest version can be downloaded at ").append(updateTXT));
+        Component setupGuideTXT = Component.text("https://github.com/Vexelosity/VexelCore-Proxy/wiki/Setup-Guide").color(NamedTextColor.DARK_AQUA).clickEvent(ClickEvent.openUrl("https://github.com/Vexelosity/VexelCore-Proxy/wiki/Setup-Guide"));
+        source.sendMessage(ChatUtils.parseLegacy("&7The setup guide can be found at ").append(setupGuideTXT));
+        Component supportTXT = Component.text("https://discord.vexelosity.com").color(NamedTextColor.DARK_AQUA).clickEvent(ClickEvent.openUrl("https://discord.vexelosity.com"));
+        source.sendMessage(ChatUtils.parseLegacy("&7Join our Discord for support and more at ").append(supportTXT));
     }
 
     public void showEnabledFeatures(CommandSource source) {
-        if (customCommand.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Custom Commands");
-        } else {
-            ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Custom Commands");
+        ChatUtils.sendMsg(source,getFeatureDisplay("Better Glist",config.node("glist").node("enabled").getBoolean()));
+        ChatUtils.sendMsg(source,getFeatureDisplay("Jump",config.node("jump").node("enabled").getBoolean()));
+        ChatUtils.sendMsg(source,getFeatureDisplay("Broadcast",config.node("broadcast").node("enabled").getBoolean()));
+        ChatUtils.sendMsg(source,getFeatureDisplay("Player Information",config.node("player-information").node("enabled").getBoolean()));
+        ChatUtils.sendMsg(source,getFeatureDisplay("HelpOP",config.node("helpop").node("enabled").getBoolean()));
+        ChatUtils.sendMsg(source,getFeatureDisplay("Custom Commands",config.node("custom-command").node("enabled").getBoolean()));
+    }
+
+    public String getFeatureDisplay(String featureName, Boolean enabled) {
+        if (enabled) {
+            return "&a"+featureName + "&7: " + enabled;
         }
-        if (glist.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Better Glist");
-        } else {
-            ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Better Glist");
-        }
-        if (jump.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Jump");
-        } else {
-            ChatUtils.sendMsg(source, "&8[&cDisabled&8] &3Jump");
-        }
-        if (broadcast.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Broadcast");
-        } else {
-            ChatUtils.sendMsg(source,"&8[&cDisabled&8] &3Broadcast");
-        }
-        if (playerinformation.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Player Information");
-        } else {
-            ChatUtils.sendMsg(source,"&8[&cDisabled&8] &3Player Information");
-        }
-        if (helpop.getBoolean("enabled")) {
-            ChatUtils.sendMsg(source, "&8[&aEnabled&8] &3Better HelpOp");
-        } else {
-            ChatUtils.sendMsg(source,"&8[&cDisabled&8] &3Better HelpOp");
-        }
+        return "&c"+featureName + "&7: " + enabled;
     }
 
     public void showCustomCommands(CommandSource source) {
-        config.getTable("customCommand").getTables("data").forEach(data -> {
-            String type = data.getString("type");
-            switch (type) {
-                case "playerProxyExecute", "playerServerExecute" -> source.sendMessage(ChatUtils.parseLegacy("&8[&7" + type + "&8] &3/" + data.getString("newCommand") + " &7-> " + data.getString("execute")));
-                case "message" -> {
-                    source.sendMessage(ChatUtils.parseLegacy("&8[&7" + type + "&8] &3/" + data.getString("newCommand") + " &7-> "));
-                    ChatUtils.sendCCMessage(data).forEach(source::sendMessage);
-                }
-                default -> source.sendMessage(ChatUtils.parseLegacy("&cError: unknown CC type"));
-            }
-            data.getString("newCommand");
-        });
+        try {
+            config.node("custom-command").node("execute-commands").getList(CCMDExec.class).forEach(ccmdExec -> {
+                ChatUtils.sendMsg(source, "&3",ccmdExec.getNewCommand(),"&7->&3",ccmdExec.getExecutions().stream().collect(Collectors.joining(", ")));
+            });
+            config.node("custom-command").node("send-messages").getList(CCMDMsg.class).forEach(ccmdExec -> {
+                ArrayList<TextComponent> tcFinal = new ArrayList<>();
+                ccmdExec.getComponents().forEach(ccmdComponent -> tcFinal.add(ChatUtils.getCCMessage(ccmdComponent)));
+                ChatUtils.sendMsg(source, "&3 " + ccmdExec.getNewCommand() + " &7->&3 ");
+                tcFinal.forEach(source::sendMessage);
+            });
+        } catch (Exception ignored) {}
     }
 }
