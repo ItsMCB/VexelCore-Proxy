@@ -13,11 +13,6 @@ public class ChatUtils {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(String.join(" ", input));
     }
 
-    public static TextComponent toComponent(String ...input) {
-        return parseLegacy(String.join(" ", input));
-
-    }
-
     public static TextComponent clickableComponent(String input, String hoverMsg, String action, String actionValue) {
         if (hoverMsg == null) {
             return ChatUtils.parseLegacy(input)
@@ -50,5 +45,6 @@ public class ChatUtils {
     public static void sendComponentMsg(CommandSource source, String input, TextComponent textComponent) {
         source.sendMessage(parseLegacy(input + " ").append(textComponent));
     }
+
 
 }

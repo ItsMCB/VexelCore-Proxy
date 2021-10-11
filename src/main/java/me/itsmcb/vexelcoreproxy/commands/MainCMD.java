@@ -13,6 +13,7 @@ import me.itsmcb.vexelcoreproxy.utils.TimeUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -26,16 +27,14 @@ public class MainCMD implements SimpleCommand {
     private final CommentedConfigurationNode config;
     private final VexelCoreProxy instance;
     private final CommentedConfigurationNode language;
-    private final CommentedConfigurationNode glist;
     private final String pluginName;
     private final String pluginVersion;
 
     public MainCMD(VexelCoreProxy instance) {
         this.instance = instance;
-        this.config = instance.getYamlConfig().get();
+        this.config = instance.getConfig().get();
         this.language = instance.getLang().get();
         PluginDescription pluginDescription = instance.getProxyServer().getPluginManager().getPlugin("vexelcore").get().getDescription();
-        this.glist = instance.getLang().get().node("glist");
         this.pluginName = pluginDescription.getName().get();
         this.pluginVersion = pluginDescription.getVersion().get();
     }
@@ -52,14 +51,14 @@ public class MainCMD implements SimpleCommand {
             if (args[0].equalsIgnoreCase("reload")) {
                 long startTime = System.nanoTime();
                 ConfigUtils.unloadFeatures(instance);
-                instance.getYamlConfig().load();
+                instance.getConfig().load();
                 ConfigUtils.loadFeatures(instance);
                 long endTime = System.nanoTime();
                 instance.getLogger().info("All configs have been loaded! Took " + TimeUtils.convertDurationToMs(startTime,endTime));
                 ChatUtils.sendMsg(source, language.node("general").node("prefix").getString(), language.node("confirmation").node("reloadedConfig").getString());
                 return;
             }
-            if (args[0].equalsIgnoreCase("features")) {
+            if (args[0].equalsIgnoreCase("feature") || args[0].equalsIgnoreCase("features")) {
                 if (args.length >= 3) {
                     if (config.node(args[2]).isNull()) {
                         ChatUtils.sendMsg(source, language.node("error").node("featureNotFound").getString());
@@ -68,18 +67,19 @@ public class MainCMD implements SimpleCommand {
                         boolean enableFeature = !args[1].equalsIgnoreCase("disable");
                         try {
                             ConfigUtils.unloadFeatures(instance);
-                            instance.getYamlConfig().get().node(args[2]).node("enabled").set(enableFeature);
-                            instance.getYamlConfig().save();
-                            instance.getYamlConfig().load();
+                            instance.getConfig().get().node(args[2]).node("enabled").set(enableFeature);
+                            instance.getConfig().save();
+                            instance.getConfig().load();
                             ConfigUtils.loadFeatures(instance);
                             ChatUtils.sendMsg(source, language.node("confirmation").node("featureStateChangeSuccess").getString().replace("[feature]",args[2]).replace("[state]",Boolean.toString(enableFeature)));
+                            showEnabledFeatures(source, instance);
                         } catch (SerializationException e) {
                             e.printStackTrace();
                         }
                     }
                     return;
                 }
-                showEnabledFeatures(source);
+                showEnabledFeatures(source, instance);
                 return;
             }
             if (args[0].equalsIgnoreCase("cc") || args[0].equalsIgnoreCase("customcommand")) {
@@ -100,7 +100,7 @@ public class MainCMD implements SimpleCommand {
     @Override
     public List<String> suggest(Invocation invocation) {
         String[] args = invocation.arguments();
-        return TabUtils.returnTab(args, List.of("features","customcommand","reload"),List.of("enable","disable"),List.of("main","glist","jump","broadcast","player-information","helpop","custom-command"));
+        return TabUtils.returnTab(args, List.of("features","customcommand","reload"), List.of("enable","disable"), instance.getFeatureHandler().getAllFeatureIds());
     }
 
     public void showHelp(CommandSource source) {
@@ -114,28 +114,25 @@ public class MainCMD implements SimpleCommand {
         source.sendMessage(ChatUtils.parseLegacy("&7Join our Discord for support and more at ").append(supportTXT));
     }
 
-    public void showEnabledFeatures(CommandSource source) {
-        ChatUtils.sendMsg(source,getFeatureDisplay("Better Glist",config.node("glist").node("enabled").getBoolean()));
-        ChatUtils.sendMsg(source,getFeatureDisplay("Jump",config.node("jump").node("enabled").getBoolean()));
-        ChatUtils.sendMsg(source,getFeatureDisplay("Broadcast",config.node("broadcast").node("enabled").getBoolean()));
-        ChatUtils.sendMsg(source,getFeatureDisplay("Player Information",config.node("player-information").node("enabled").getBoolean()));
-        ChatUtils.sendMsg(source,getFeatureDisplay("HelpOP",config.node("helpop").node("enabled").getBoolean()));
-        ChatUtils.sendMsg(source,getFeatureDisplay("Custom Commands",config.node("custom-command").node("enabled").getBoolean()));
+    public void showEnabledFeatures(CommandSource source, VexelCoreProxy instance) {
+        instance.getFeatureHandler().getVcpFeatures().forEach(feature -> {
+            source.sendMessage(ChatUtils.parseLegacy(getFeatureDisplay(feature.getFeatureId(),feature.getStatus())).clickEvent(ClickEvent.runCommand("/vcp feature " + feature.getOppositeStatusText() + " " + feature.getFeatureId())).hoverEvent(HoverEvent.showText(ChatUtils.parseLegacy(language.node("general").node("toggleFeature").getString()))));
+        });
     }
 
     public String getFeatureDisplay(String featureName, Boolean enabled) {
         if (enabled) {
-            return "&a"+featureName + "&7: " + enabled;
+            return "&a"+featureName + "&7: true";
         }
-        return "&c"+featureName + "&7: " + enabled;
+        return "&c"+featureName + "&7: false";
     }
 
     public void showCustomCommands(CommandSource source) {
         try {
-            config.node("custom-command").node("execute-commands").getList(CCMDExec.class).forEach(ccmdExec -> {
+            config.node("custom-commands").node("execute-commands").getList(CCMDExec.class).forEach(ccmdExec -> {
                 ChatUtils.sendMsg(source, "&3",ccmdExec.getNewCommand(),"&7->&3",ccmdExec.getExecutions().stream().collect(Collectors.joining(", ")));
             });
-            config.node("custom-command").node("send-messages").getList(CCMDMsg.class).forEach(ccmdExec -> {
+            config.node("custom-commands").node("send-messages").getList(CCMDMsg.class).forEach(ccmdExec -> {
                 ArrayList<TextComponent> tcFinal = new ArrayList<>();
                 ccmdExec.getComponents().forEach(ccmdComponent -> tcFinal.add(ChatUtils.getCCMessage(ccmdComponent)));
                 ChatUtils.sendMsg(source, "&3 " + ccmdExec.getNewCommand() + " &7->&3 ");

@@ -6,8 +6,11 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import me.itsmcb.vexelcoreproxy.commands.*;
 import me.itsmcb.vexelcoreproxy.config.VCPConfig;
+import me.itsmcb.vexelcoreproxy.features.FeatureHandler;
 import me.itsmcb.vexelcoreproxy.extras.Metrics;
+import me.itsmcb.vexelcoreproxy.features.VCPFeature;
 import me.itsmcb.vexelcoreproxy.utils.ConfigUtils;
 import me.itsmcb.vexelcoreproxy.utils.MetricsUtils;
 import org.slf4j.Logger;
@@ -31,9 +34,10 @@ public class VexelCoreProxy {
     private final Metrics.Factory metricsFactory;
     private VCPConfig mainConfig;
     private VCPConfig language;
+    private FeatureHandler featureHandler;
 
     public Path getDataDirectory() { return dataDirectory; }
-    public VCPConfig getYamlConfig() {
+    public VCPConfig getConfig() {
         return mainConfig;
     }
     public VCPConfig getLang() {
@@ -41,6 +45,7 @@ public class VexelCoreProxy {
     }
     public ProxyServer getProxyServer() { return server; }
     public Logger getLogger() { return logger; }
+    public FeatureHandler getFeatureHandler() { return featureHandler; }
 
     @Inject
     public VexelCoreProxy(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
@@ -64,9 +69,10 @@ public class VexelCoreProxy {
             new VCPConfig(instance, dataDirectory, "language/en_US");
 
             // Set language data
-            this.language = new VCPConfig(instance, dataDirectory, "language/" + getYamlConfig().get().node("language").getString());
+            this.language = new VCPConfig(instance, dataDirectory, "language/" + getConfig().get().node("language").getString());
 
             // Enable features
+            this.featureHandler = new FeatureHandler();
             ConfigUtils.loadFeatures(instance);
 
         } catch (Exception e) {

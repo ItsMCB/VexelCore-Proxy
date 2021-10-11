@@ -1,5 +1,5 @@
-# VexelCore-Proxy
-A modular and lightweight essential features plugin for Minecraft proxies.
+# About
+**VexelCoreProxy** is a modular and lightweight essential features plugin for Minecraft proxies.  Our goal is to provide the necessary features networks need on their proxy software.
 
 NOTE: This is primarily designed to fit the needs of the SouthHollow network.
 
@@ -33,7 +33,7 @@ Usage: Edit the configuration file. CC's can be previewed in-game with `/vcp cc 
 
 #### Discord Command Example
 ```yaml
-custom-command:
+custom-commands:
   enabled: true
   send-messages:
     -   new-command: discord

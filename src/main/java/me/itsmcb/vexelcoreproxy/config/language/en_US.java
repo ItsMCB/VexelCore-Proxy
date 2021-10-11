@@ -16,10 +16,11 @@ public class en_US {
         put("serverName", "&aSouthHollow Network");
         put("bar", "&r&8&m                 &r");
         put("onlinePlayers", "&7- &3[amountOfOnlinePlayers]");
+        put("toggleFeature", "&7Click to toggle feature.");
     }};
 
     private List<String> help = List.of(
-            "&3/vcp &7features&8- &7Displays the enabled plugin features",
+            "&3/vcp &7features&8- &7Displays the state of VCP features",
             "&3/vcp &7features [enable/disable] [feature name] &8- &7Enables or disables a plugin feature",
             "&3/vcp &7cc &8- &7Displays help for custom commands",
             "&3/vcp &7reload &8- &7Reloads plugin config.",

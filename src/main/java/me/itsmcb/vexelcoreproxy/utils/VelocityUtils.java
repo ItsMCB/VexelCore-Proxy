@@ -6,22 +6,22 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class VelocityUtils {
 
-    public static void registerCommand(String[] alises, Command command, VexelCoreProxy instance) {
+    public static void registerCommand(ArrayList<String> aliases, Command command, VexelCoreProxy instance) {
         ProxyServer server = instance.getProxyServer();
-        CommandMeta.Builder builder = server.getCommandManager().metaBuilder(alises[0]);
-        if (alises.length > 1) {
-            String[] extra_aliases = Arrays.copyOfRange(alises, 1, alises.length);
+        CommandMeta.Builder builder = server.getCommandManager().metaBuilder(aliases.get(0));
+        if (aliases.size() > 1) {
+            String[] extra_aliases = aliases.toArray(aliases.toArray(new String[1]));
             builder.aliases(extra_aliases);
         }
         try {
             server.getCommandManager().register(builder.build(),command);
         } catch (Exception e) {
             e.printStackTrace();
-            instance.getLogger().error("An error occurred while registering the command \"" + alises[0] + "\"");
+            instance.getLogger().error("An error occurred while registering the command \"" + aliases.get(0) + "\"");
         }
     }
 

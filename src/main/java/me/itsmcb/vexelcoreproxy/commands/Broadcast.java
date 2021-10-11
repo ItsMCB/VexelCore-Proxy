@@ -25,9 +25,9 @@ public class Broadcast implements SimpleCommand {
 
     public Broadcast(VexelCoreProxy VCP) {
         this.server = VCP.getProxyServer();
-        this.config = VCP.getYamlConfig().get();
+        this.config = VCP.getConfig().get();
         this.language = VCP.getLang().get();
-        this.bk = VCP.getYamlConfig().get().node("broadcast");
+        this.bk = VCP.getConfig().get().node("broadcast");
     }
 
     @Override

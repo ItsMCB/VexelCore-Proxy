@@ -20,7 +20,7 @@ public class MainConfig {
 
     HelpOp helpop;
 
-    CustomCommand customCommand;
+    CustomCommand customCommands;
 
 }
 

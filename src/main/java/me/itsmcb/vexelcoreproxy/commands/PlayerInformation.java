@@ -26,7 +26,7 @@ public class PlayerInformation implements SimpleCommand {
 
     public PlayerInformation(VexelCoreProxy VCP) {
         this.server = VCP.getProxyServer();
-        this.config = VCP.getYamlConfig().get();
+        this.config = VCP.getConfig().get();
         this.language = VCP.getLang().get();
     }
 
