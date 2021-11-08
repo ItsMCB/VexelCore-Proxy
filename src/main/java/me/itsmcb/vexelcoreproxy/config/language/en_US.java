@@ -49,6 +49,7 @@ public class en_US {
         put("canOnlyBeExecutedByAPlayer", "&c(!) &7This can only be executed by a player!");
         put("helpop","&7Online staff have been alerted to your help request. If you still need support, visit &3#support &7in our &3/discord");
         put("featureStateChangeSuccess","&7Successfully set &3[feature] &7to &3[state]");
+        put("report","&7Online staff have been alerted to your player report. If you still need assistabce, visit &3#player-report &7in our &3/discord");
     }};
 
     HashMap<String, String> playerInfo = new HashMap<String, String>()  {{
@@ -77,5 +78,10 @@ public class en_US {
     HashMap<String, String> helpop = new HashMap<String, String>()  {{
         put("staffAlert", "&3[requester] &7made a help request in &3[serverName] &7for reason: &3[reason]");
         put("clickToTeleport", "&7Click to join [serverName]");
+    }};
+
+    HashMap<String, String> report = new HashMap<String, String>()  {{
+        put("reportAlert", "&3[reporter] &7reported &3[reported] in &3[serverName] &7for reason: &3[reason]");
+        put("clickToGo", "&7Click to join [serverName]");
     }};
 }

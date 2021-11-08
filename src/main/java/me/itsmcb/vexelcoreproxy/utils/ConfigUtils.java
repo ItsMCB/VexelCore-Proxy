@@ -65,6 +65,7 @@ public class ConfigUtils {
         instance.getFeatureHandler().registerFeature(new VCPFeature(instance, "broadcast", new Broadcast(instance)), true);
         instance.getFeatureHandler().registerFeature(new VCPFeature(instance, "player-information", new PlayerInformation(instance)), true);
         instance.getFeatureHandler().registerFeature(new VCPFeature(instance, "helpop", new HelpOp(instance)), true);
+        instance.getFeatureHandler().registerFeature(new VCPFeature(instance, "report", new Report(instance)), true);
         if (instance.getConfig().get().node("custom-commands").node("enabled").getBoolean()) {
             loadCC(instance);
         }
