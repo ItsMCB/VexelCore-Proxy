@@ -22,5 +22,7 @@ public class MainConfig {
 
     CustomCommand customCommands;
 
+    Report report;
+
 }
 
