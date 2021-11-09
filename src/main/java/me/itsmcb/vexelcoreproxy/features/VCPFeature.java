@@ -11,7 +11,7 @@ public class VCPFeature {
 
     private VexelCoreProxy instance;
     private String featureId;
-    private String newCommand;
+    private String firstAlias;
     private Boolean status;
     private List<String> aliases;
     private Command command;
@@ -22,7 +22,7 @@ public class VCPFeature {
         this.command = command;
         try {
             List<String> aliases = instance.getConfig().get().node(featureId).node("aliases").getList(String.class);
-            this.newCommand = aliases.get(0);
+            this.firstAlias = aliases.get(0);
             if (aliases.size() > 1) {
                 this.aliases = aliases.subList(1,aliases.size());
             }
@@ -31,9 +31,13 @@ public class VCPFeature {
         }
     }
 
-    public String getNewCommand() {
-        return this.newCommand;
+    public String getFirstAlias() {
+        return this.firstAlias;
     }
+
+    public List<String> getAdditionAliases() { return this.aliases; }
+
+    public Command getCommand() { return command; }
 
     public String getFeatureId() {
         return this.featureId;
@@ -43,29 +47,7 @@ public class VCPFeature {
         return this.status;
     }
 
-    public String getOppositeStatusText() {
-        if (status) { return "disable"; }
-        return "enable";
-    }
-
-    public void enableIfAble() {
-        if (instance.getConfig().get().node(featureId).node("enabled").getBoolean()) {
-            ArrayList<String> commandAliases = new ArrayList<>();
-            commandAliases.add(newCommand);
-            if (aliases != null) {
-                commandAliases.addAll(aliases);
-            }
-            VelocityUtils.registerCommand(commandAliases,command,instance);
-            status = true;
-            return;
-        }
-        status = false;
-    }
-
-    public void disableIfEnabled() {
-        if (instance.getConfig().get().node(featureId).node("enabled").getBoolean()) {
-            instance.getProxyServer().getCommandManager().unregister(newCommand);
-            status = false;
-        }
+    public void setStatus(Boolean newStatus) {
+        this.status = newStatus;
     }
 }

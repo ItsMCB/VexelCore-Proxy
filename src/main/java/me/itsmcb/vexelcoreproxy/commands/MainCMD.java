@@ -6,10 +6,7 @@ import com.velocitypowered.api.plugin.PluginDescription;
 import me.itsmcb.vexelcoreproxy.VexelCoreProxy;
 import me.itsmcb.vexelcoreproxy.config.main.cc.CCMDExec;
 import me.itsmcb.vexelcoreproxy.config.main.cc.CCMDMsg;
-import me.itsmcb.vexelcoreproxy.utils.ChatUtils;
-import me.itsmcb.vexelcoreproxy.utils.ConfigUtils;
-import me.itsmcb.vexelcoreproxy.utils.TabUtils;
-import me.itsmcb.vexelcoreproxy.utils.TimeUtils;
+import me.itsmcb.vexelcoreproxy.utils.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -116,7 +113,7 @@ public class MainCMD implements SimpleCommand {
 
     public void showEnabledFeatures(CommandSource source, VexelCoreProxy instance) {
         instance.getFeatureHandler().getVcpFeatures().forEach(feature -> {
-            source.sendMessage(ChatUtils.parseLegacy(getFeatureDisplay(feature.getFeatureId(),feature.getStatus())).clickEvent(ClickEvent.runCommand("/vcp feature " + feature.getOppositeStatusText() + " " + feature.getFeatureId())).hoverEvent(HoverEvent.showText(ChatUtils.parseLegacy(language.node("general").node("toggleFeature").getString()))));
+            source.sendMessage(ChatUtils.parseLegacy(getFeatureDisplay(feature.getFeatureId(),feature.getStatus())).clickEvent(ClickEvent.runCommand("/vcp feature " + FeatureUtils.getOppositeStatus(feature.getStatus()) + " " + feature.getFeatureId())).hoverEvent(HoverEvent.showText(ChatUtils.parseLegacy(language.node("general").node("toggleFeature").getString()))));
         });
     }
 

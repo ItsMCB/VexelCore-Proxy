@@ -6,11 +6,9 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
-import me.itsmcb.vexelcoreproxy.commands.*;
 import me.itsmcb.vexelcoreproxy.config.VCPConfig;
 import me.itsmcb.vexelcoreproxy.features.FeatureHandler;
 import me.itsmcb.vexelcoreproxy.extras.Metrics;
-import me.itsmcb.vexelcoreproxy.features.VCPFeature;
 import me.itsmcb.vexelcoreproxy.utils.ConfigUtils;
 import me.itsmcb.vexelcoreproxy.utils.MetricsUtils;
 import org.slf4j.Logger;
@@ -72,7 +70,7 @@ public class VexelCoreProxy {
             this.language = new VCPConfig(instance, dataDirectory, "language/" + getConfig().get().node("language").getString());
 
             // Enable features
-            this.featureHandler = new FeatureHandler();
+            this.featureHandler = new FeatureHandler(instance);
             ConfigUtils.loadFeatures(instance);
 
         } catch (Exception e) {
